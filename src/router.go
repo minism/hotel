@@ -10,5 +10,7 @@ func createRouter() *mux.Router {
 	router.HandleFunc("/servers/{id}", handleGetServer).Methods("GET")
 	router.HandleFunc("/servers", handleCreateServer).Methods("POST")
 	router.HandleFunc("/servers/{id}", handleUpdateServer).Methods("PUT")
+	router.HandleFunc("/servers/{id}/alive", handleServerAlive).Methods("POST")
+
 	return router
 }

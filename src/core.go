@@ -17,3 +17,7 @@ func createServer(server GameServer) {
 func updateServerById(id ServerIDType, server GameServer) {
 
 }
+
+func pingServerAlive(id ServerIDType) {
+
+}

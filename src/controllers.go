@@ -35,3 +35,10 @@ func handleCreateServer(w http.ResponseWriter, r *http.Request) {
 func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(OK_RESPONSE)
 }
+
+func handleServerAlive(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := ServerIDType(vars["id"])
+	pingServerAlive(id)
+	json.NewEncoder(w).Encode(OK_RESPONSE)
+}
