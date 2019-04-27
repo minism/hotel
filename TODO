@@ -1,0 +1,3 @@
+- Use redis or some other trivial in-memory db rather than single process
+- Implement NAT hole punching
+
