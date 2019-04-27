@@ -1,9 +1,14 @@
 package main
 
-// Unique ID for a game type, so hotel can multiplex across games.
-type GameId string
+// Unique string for a game type, so hotel can multiplex across games.
+type GameIDType string
 
 // An connectable game server instance.
 type GameServer struct {
-	Name string
+	GameID     GameIDType
+	Name       string
+	Host       string
+	Port       string
+	NumPlayers int
+	MaxPlayers int
 }

@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
-	"github.com/gorilla/mux"
+	"github.com/gorilla/handlers"
 )
 
 const (
@@ -13,12 +14,11 @@ const (
 )
 
 func main() {
-	var router = mux.NewRouter()
-
-	router.HandleFunc("/health", handleHealth).Methods("GET")
-	router.HandleFunc("/servers", handleListServers).Methods("GET")
-
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
+	mainRouter := handlers.LoggingHandler(os.Stdout, createRouter())
+
+	// TODO: Run in goroutine with signal handling to not block
+	// https://github.com/gorilla/mux
 	fmt.Println("Running server on", addr)
-	log.Fatal(http.ListenAndServe(addr, router))
+	log.Fatal(http.ListenAndServe(addr, mainRouter))
 }
