@@ -16,7 +16,7 @@ func main() {
 	var router = mux.NewRouter()
 
 	router.HandleFunc("/health", handleHealth).Methods("GET")
-	router.HandleFunc("/lobby", handleGetLobbies).Methods("GET")
+	router.HandleFunc("/servers", handleListServers).Methods("GET")
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	fmt.Println("Running server on", addr)

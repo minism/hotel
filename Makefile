@@ -2,4 +2,10 @@ SRCS=$(wildcard src/*.go)
 SERVER=server
 
 ${SERVER}: ${SRCS}
-	go build -o $@ $^ 
+	go build -o $@ $^
+
+run: ${SRCS}
+	go run $^
+
+deps:
+	dep ensure

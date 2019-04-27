@@ -9,7 +9,8 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode("OK")
 }
 
-func handleGetLobbies(w http.ResponseWriter, r *http.Request) {
-	lobbies := make([]int, 0)
-	json.NewEncoder(w).Encode(lobbies)
+func handleListServers(w http.ResponseWriter, r *http.Request) {
+	servers := make([]GameServer, 0)
+	servers = append(servers, GameServer{Name: "Test"})
+	json.NewEncoder(w).Encode(servers)
 }
