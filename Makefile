@@ -9,3 +9,6 @@ run: ${SRCS}
 
 deps:
 	dep ensure
+
+integration-test:
+	python integration_test/__init__.py
