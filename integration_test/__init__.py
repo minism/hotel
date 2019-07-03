@@ -18,6 +18,17 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(404, r.status_code)
         r = requests.get(url('/bar'))
         self.assertEqual(404, r.status_code)
+    
+    def testCreateAndGet(self):
+        data = {
+
+        }
+        r = requests.post(url('/servers'), json=data)
+        self.assertEqual(200, r.status_code)
+        res = r.json()
+        self.assertTrue(res.has_key("id"))
+        print res
+
 
 if __name__ == '__main__':
     unittest.main()

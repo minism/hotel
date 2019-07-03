@@ -29,11 +29,31 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateServer(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(ok)
+	server, err := DecodeAndValidateServer(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	server, err = insertServer(server)
+	if err != nil {
+		http.Error(w, "Failed to create server: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(server)
 }
 
 func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(ok)
+	server, err := DecodeAndValidateServer(r.Body)
+	if err != nil {
+		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	server, err = updateServerById(server.ID, server)
+	if err != nil {
+		http.Error(w, "Failed to create server: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	json.NewEncoder(w).Encode(server)
 }
 
 func handleServerAlive(w http.ResponseWriter, r *http.Request) {

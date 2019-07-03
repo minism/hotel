@@ -3,10 +3,10 @@ package main
 import "errors"
 
 // TODO: Use something like redis instead for this.
-var _db map[ServerIDType]*GameServer
+var _db map[ServerIDType]GameServer
 
 func initCore() {
-	_db = make(map[ServerIDType]*GameServer)
+	_db = make(map[ServerIDType]GameServer)
 }
 
 func getServersByGameId(gid GameIDType) []GameServer {
@@ -15,24 +15,25 @@ func getServersByGameId(gid GameIDType) []GameServer {
 	return ret
 }
 
-func getServerById(id ServerIDType) *GameServer {
+func getServerById(id ServerIDType) GameServer {
 	return _db[id]
 }
 
-func insertServer(server GameServer) {
-	_db[server.ID] = &server
+func insertServer(server GameServer) (GameServer, error) {
+	_db[server.ID] = server
+	return server, nil
 }
 
-func updateServerById(id ServerIDType, server *GameServer) error {
+func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	curr, ok := _db[id]
 	if !ok {
-		return errors.New("No server with ID type: " + string(id))
+		return curr, errors.New("No server with ID type: " + string(id))
 	}
-	err := curr.UpdateFrom(server)
+	err := curr.UpdateFrom(&server)
 	if err != nil {
-		return err
+		return curr, err
 	}
-	return nil
+	return curr, nil
 }
 
 func pingServerAlive(id ServerIDType) {
