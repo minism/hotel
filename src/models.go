@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 )
 
@@ -39,6 +40,9 @@ func DecodeAndValidateServer(reader io.Reader) (GameServer, error) {
 }
 
 func (s *GameServer) Validate() error {
+	if len(s.Name) < 1 {
+		return errors.New("Name must be non-empty.")
+	}
 	return nil
 }
 
