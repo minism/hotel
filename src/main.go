@@ -14,6 +14,8 @@ const (
 )
 
 func main() {
+	initCore()
+
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	mainRouter := handlers.LoggingHandler(os.Stdout, createRouter())
 

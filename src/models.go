@@ -8,11 +8,15 @@ type ServerIDType string
 
 // An connectable game server instance.
 type GameServer struct {
-	GameID     GameIDType
-	ServerID   ServerIDType
-	Name       string
-	Host       string
-	Port       string
-	NumPlayers int
-	MaxPlayers int
+	ID         ServerIDType `json:"id"`
+	GameID     GameIDType   `json:"gameId"`
+	Name       string       `json:"name"`
+	Host       string       `json:"host"`
+	Port       string       `json:"port"`
+	NumPlayers int          `json:"numPlayers"`
+	MaxPlayers int          `json:"maxPlayers"`
+}
+
+func (s *GameServer) UpdateFrom(other *GameServer) error {
+	return nil
 }

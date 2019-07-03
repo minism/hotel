@@ -8,11 +8,11 @@ import (
 )
 
 const (
-	OK_RESPONSE = "OK"
+	ok = "OK"
 )
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(OK_RESPONSE)
+	json.NewEncoder(w).Encode(ok)
 }
 
 func handleListServers(w http.ResponseWriter, r *http.Request) {
@@ -29,16 +29,16 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateServer(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(OK_RESPONSE)
+	json.NewEncoder(w).Encode(ok)
 }
 
 func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(OK_RESPONSE)
+	json.NewEncoder(w).Encode(ok)
 }
 
 func handleServerAlive(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := ServerIDType(vars["id"])
 	pingServerAlive(id)
-	json.NewEncoder(w).Encode(OK_RESPONSE)
+	json.NewEncoder(w).Encode(ok)
 }
