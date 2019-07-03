@@ -12,7 +12,7 @@ type GameIDType string
 // Unique ID for a game server instance.
 type ServerIDType int
 
-// An connectable game server instance.
+// A connectable game server instance.
 type GameServer struct {
 	ID         ServerIDType `json:"id"`
 	GameID     GameIDType   `json:"gameId"`
