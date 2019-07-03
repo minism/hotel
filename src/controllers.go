@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -23,14 +24,20 @@ func handleListServers(w http.ResponseWriter, r *http.Request) {
 
 func handleGetServer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := ServerIDType(vars["id"])
-	server := getServerById(id)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		// TODO: Full error object should not be returned in production mode
+		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	server := getServerById(ServerIDType(id))
 	json.NewEncoder(w).Encode(server)
 }
 
 func handleCreateServer(w http.ResponseWriter, r *http.Request) {
 	server, err := DecodeAndValidateServer(r.Body)
 	if err != nil {
+		// TODO: Full error object should not be returned in production mode
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -58,7 +65,12 @@ func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
 
 func handleServerAlive(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id := ServerIDType(vars["id"])
-	pingServerAlive(id)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		// TODO: Full error object should not be returned in production mode
+		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	pingServerAlive(ServerIDType(id))
 	json.NewEncoder(w).Encode(ok)
 }

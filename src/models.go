@@ -10,7 +10,7 @@ import (
 type GameIDType string
 
 // Unique ID for a game server instance.
-type ServerIDType string
+type ServerIDType int
 
 // An connectable game server instance.
 type GameServer struct {
@@ -18,7 +18,7 @@ type GameServer struct {
 	GameID     GameIDType   `json:"gameId"`
 	Name       string       `json:"name"`
 	Host       string       `json:"host"`
-	Port       string       `json:"port"`
+	Port       int          `json:"port"`
 	NumPlayers int          `json:"numPlayers"`
 	MaxPlayers int          `json:"maxPlayers"`
 }
