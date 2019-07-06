@@ -7,6 +7,9 @@ ${SERVER}: ${SRCS}
 run: ${SRCS}
 	go run $^
 
+watch: ${SRCS}
+	cd src && gin run *.go
+
 deps:
 	dep ensure
 
