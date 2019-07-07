@@ -1,14 +1,14 @@
 SRCS=$(wildcard src/*.go)
-SERVER=server
+TARGET=hotel
 
-${SERVER}: ${SRCS}
+${TARGET}: ${SRCS}
 	go build -o $@ $^
 
 run: ${SRCS}
 	go run $^
 
 watch: ${SRCS}
-	cd src && gin run *.go
+	cd src && gin -p 3001 run main.go
 
 deps:
 	dep ensure

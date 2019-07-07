@@ -2,4 +2,5 @@
 - Implement NAT hole punching.
 - Concurrent load testing
 - Metadata blob attached to servers.
+- Reaper process that cleans up old servers
 

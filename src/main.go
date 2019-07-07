@@ -14,6 +14,7 @@ const (
 )
 
 func main() {
+	initDb()
 	initCore()
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
@@ -21,6 +22,6 @@ func main() {
 
 	// TODO: Run in goroutine with signal handling to not block
 	// https://github.com/gorilla/mux
-	fmt.Println("Running server on", addr)
+	log.Println("Running server on", addr)
 	log.Fatal(http.ListenAndServe(addr, mainRouter))
 }

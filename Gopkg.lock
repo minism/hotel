@@ -17,12 +17,21 @@
   revision = "c5c6c98bc25355028a63748a498942a6398ccd22"
   version = "v1.7.1"
 
+[[projects]]
+  digest = "1:4a49346ca45376a2bba679ca0e83bec949d780d4e927931317904bad482943ec"
+  name = "github.com/mattn/go-sqlite3"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c7c4067b79cc51e6dfdcef5c702e74b1e0fa7c75"
+  version = "v1.10.0"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
     "github.com/gorilla/handlers",
     "github.com/gorilla/mux",
+    "github.com/mattn/go-sqlite3",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
