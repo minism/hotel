@@ -74,7 +74,7 @@ class IntegrationTest(unittest.TestCase):
         })
         self.assertEqual(200, r.status_code)
         new_id_1 = r.json().get('id')
-        self.assertTrue(new_id_1)
+        self.assertTrue(new_id_1 is not None)
 
         r = create({
             'name': 'bar',
@@ -83,13 +83,13 @@ class IntegrationTest(unittest.TestCase):
             'port': 1000,
         })
         new_id_2 = r.json().get('id')
-        self.assertTrue(new_id_2)
+        self.assertTrue(new_id_2 is not None)
 
-        r = requests.get(url('/servers/%s' % new_id_1))
+        r = get(new_id_1)
         self.assertEqual(200, r.status_code)
         self.assertEquals('foo', r.json().get('name'))
 
-        r = requests.get(url('/servers/%s' % new_id_2))
+        r = get(new_id_2)
         self.assertEqual(200, r.status_code)
         self.assertEquals('bar', r.json().get('name'))
     
@@ -122,7 +122,6 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(200, r.status_code)
 
         serverNames = [obj['name'] for obj in r.json()]
-        self.assertEqual(2, len(serverNames))
         self.assertEqual({'foo', 'bar'}, set(serverNames))
     
     def testCreateAndUpdate(self):
@@ -139,6 +138,11 @@ class IntegrationTest(unittest.TestCase):
             'name': 'new name',
             'port': 1001,
         })
+        self.assertEqual(200, r.status_code)
+        self.assertEqual('new name', r.json().get('name'))
+        self.assertEqual(1001, r.json().get('port'))
+        
+        r = get(server_id)
         self.assertEqual(200, r.status_code)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))

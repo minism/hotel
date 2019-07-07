@@ -75,21 +75,50 @@ func getServerById(id ServerIDType) (GameServer, bool) {
 }
 
 func insertServer(server GameServer) (GameServer, error) {
-	server.ID = nextID()
-	_db[server.ID] = server
+	stmt, err := db.Prepare(`
+		INSERT INTO servers (game_id, name, host, port, num_players, max_players)
+		VALUES (?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		log.Println(err)
+		return server, errors.New("Failed to create server.")
+	}
+	res, err := stmt.Exec(
+		server.GameID, server.Name, server.Host, server.Port, server.NumPlayers, server.MaxPlayers)
+	if err != nil {
+		log.Println(err)
+		return server, errors.New("Failed to create server.")
+	}
+	id, err := res.LastInsertId()
+	if err != nil {
+		log.Println(err)
+		return server, errors.New("Unknown fatal error retrieving server ID.")
+	}
+	server.ID = ServerIDType(id)
 	return server, nil
 }
 
 func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
-	curr, ok := _db[id]
-	if !ok {
-		return curr, errors.New("No server with ID type: " + string(id))
-	}
-	err := curr.UpdateFrom(&server)
+	stmt, err := db.Prepare(`
+		UPDATE servers
+		SET name = ?,
+			host = ?,
+			port = ?,
+			num_players = ?,
+			max_players = ?
+		WHERE
+			id = ?
+	`)
 	if err != nil {
-		return curr, err
+		log.Println(err)
+		return server, errors.New("Failed to update server.")
 	}
-	return curr, nil
+	_, err = stmt.Exec(
+		server.Name, server.Host, server.Port, server.NumPlayers, server.MaxPlayers, id)
+	if err != nil {
+		log.Println(err)
+		return server, errors.New("Failed to update server.")
+	}
+	return server, nil
 }
 
 func pingServerAlive(id ServerIDType) {
