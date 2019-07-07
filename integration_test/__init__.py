@@ -5,8 +5,21 @@ import requests
 def url(path):
     return 'http://localhost:3000%s' % path
 
+def listServers(gameId):
+    return requests.get(url('/servers?gameId=%s' % gameId))
+
+def get(sid):
+    return requests.get(url('/servers/%s' % sid))
+
 def create(data):
     return requests.post(url('/servers'), json=data)
+
+def update(sid, data):
+    return requests.put(url('/servers/%s' % sid), json=data)
+
+def alive(sid):
+    return requests.put(url('/servers/%s/alive' % sid))
+
 
 class IntegrationTest(unittest.TestCase):
     def setUp(self):
@@ -29,6 +42,7 @@ class IntegrationTest(unittest.TestCase):
     def testMissingField(self):
         r = create({
             'name': '',
+            'gameId': 'gid',
             'host': 'www.google.com',
             'port': 1000,
         })
@@ -37,14 +51,24 @@ class IntegrationTest(unittest.TestCase):
     def testInvalidFieldType(self):
         r = create({
             'name': 'name',
+            'gameId': 'gid',
             'host': 'www.google.com',
             'port': 'string',
         })
         self._assertError(r, r'(?i)fail.*port')
+
+        r = create({
+            'name': 123,
+            'gameId': 'gid',
+            'host': 'www.google.com',
+            'port': 'string',
+        })
+        self._assertError(r, r'(?i)fail.*name')
     
     def testCreateAndGet(self):
         r = create({
             'name': 'foo',
+            'gameId': 'gid',
             'host': 'www.google.com',
             'port': 1000,
         })
@@ -54,6 +78,7 @@ class IntegrationTest(unittest.TestCase):
 
         r = create({
             'name': 'bar',
+            'gameId': 'gid',
             'host': 'www.google.com',
             'port': 1000,
         })
@@ -67,6 +92,75 @@ class IntegrationTest(unittest.TestCase):
         r = requests.get(url('/servers/%s' % new_id_2))
         self.assertEqual(200, r.status_code)
         self.assertEquals('bar', r.json().get('name'))
+    
+    def testCreateAndList(self):
+        r = create({
+            'name': 'foo',
+            'gameId': 'gid2',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+
+        r = create({
+            'name': 'bar',
+            'gameId': 'gid2',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+
+        r = create({
+            'name': 'baz',
+            'gameId': 'gid3',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+
+        r = listServers('gid2')
+        self.assertEqual(200, r.status_code)
+
+        serverNames = [obj['name'] for obj in r.json()]
+        self.assertEqual(2, len(serverNames))
+        self.assertEqual({'foo', 'bar'}, set(serverNames))
+    
+    def testCreateAndUpdate(self):
+        r = create({
+            'name': 'original',
+            'gameId': 'gid',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+        server_id = r.json().get('id')
+
+        r = update(server_id, {
+            'name': 'new name',
+            'port': 1001,
+        })
+        self.assertEqual(200, r.status_code)
+        self.assertEqual('new name', r.json().get('name'))
+        self.assertEqual(1001, r.json().get('port'))
+    
+    def testCreateAndPingAlive(self):
+        r = create({
+            'name': 'original',
+            'gameId': 'gid',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+        server_id = r.json().get('id')
+
+        r = alive(server_id)
+        self.assertEqual(200, r.status_code)
+
+        r = alive(server_id)
+        self.assertEqual(200, r.status_code)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()
