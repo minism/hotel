@@ -30,7 +30,11 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server := getServerById(ServerIDType(id))
+	server, exists := getServerById(ServerIDType(id))
+	if !exists {
+		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
+		return
+	}
 	json.NewEncoder(w).Encode(server)
 }
 

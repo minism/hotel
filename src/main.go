@@ -14,6 +14,7 @@ const (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	initDb()
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
