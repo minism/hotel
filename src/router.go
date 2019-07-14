@@ -9,6 +9,7 @@ func createRouter() *mux.Router {
 
 	// Unauthenticated routes.
 	router.HandleFunc("/health", handleHealth).Methods("GET")
+	router.HandleFunc("/identify", ss.HandleIdentify).Methods("POST")
 
 	// Authenticated routes.
 	authRouter := router.PathPrefix("/").Subrouter()
