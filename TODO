@@ -1,6 +1,39 @@
-- Use redis or some other trivial in-memory db rather than single process.
 - Implement NAT hole punching.
 - Concurrent load testing
 - Metadata blob attached to servers.
 - Reaper process that cleans up old servers
+
+Authentication requirements/research:
+    - Should be generally hard to LIST/CREATE/SPAWN
+        - https + game ID may be sufficient here
+            - However HTTPs has the problem of client intercepting proxies. But this
+              can also be circumvented to some degree by using Certificate Pinning
+    - Only the owner of a server should be able to UPDATE/DELETE/PING since that would
+      be the primary abuse vector
+    - I think what I want is basically a login flow without u/p, basically just an endpoing
+      you hit and get a token back, which you use to create and maintain your own resources,
+      like a traditional session ID in an auth system.  But there doesn't need to be the
+      overhead of "account registration".
+    - How does Master Server Framework do it?
+        - Client sends a public key, the server uses that to encrypt a session key and sends
+          that back down to the client.  That is only used for login and register requests
+          though
+        - For general security on an RPC like RegisterRooms, i *think* anyone can call this,
+          but still to be determined
+        - For security on DestroyRoom RPC, the code does:
+            if (message.Peer != room.Peer) { return ERROR }
+          Which means its assigning the room id to the *peer* to ensure its the same client
+          making the request. My naive assumption is that this is equivalent to an HTTP
+          session but I could but wrong.
+        - How is "Peer" lookup determined for an incoming request? Looks like its just based
+          on the connection ID of the UNet socket:
+            - (on connection) var peer = new PeerUnet(connectionId, _socketId);
+                              _connectedPeers[connectionId] = peer;
+            - (on data recv)  _connectedPeers.TryGetValue(connectionId, out peer);
+        - This is predicated on UNet connection ID in ReceiveFromHost:
+            https://docs.unity3d.com/ScriptReference/Networking.NetworkTransport.ReceiveFromHost.html
+          Can this be spoofed?
+    - Conclusion: Will go with a simple session ID system.
+        
+
 
