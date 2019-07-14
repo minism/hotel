@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	SessionKey = 0
+	SessionContextKey = 0
 )
 
 // TODO: This should be externalized to filesystem or database at some point once
@@ -27,12 +27,14 @@ type Session struct {
 	Servers []ServerIDType
 }
 
-func (store *SessionStore) Initialize() {}
+func (store *SessionStore) Initialize() {
+	store.Sessions = make(map[string]Session)
+}
 
 func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if session, exists := store.getSession(r); exists {
-			context.Set(r, SessionKey, session)
+			context.Set(r, SessionContextKey, session)
 			next.ServeHTTP(w, r)
 		} else {
 			http.Error(w, "Forbidden", http.StatusForbidden)
@@ -58,6 +60,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 			http.Error(w, "Failed to identify.", http.StatusBadRequest)
 			return
 		}
+		store.createSession(sessionId)
 	}
 	json.NewEncoder(w).Encode(sessionId)
 }
@@ -69,4 +72,11 @@ func (store *SessionStore) getSession(r *http.Request) (Session, bool) {
 		return session, true
 	}
 	return ret, false
+}
+
+func (store *SessionStore) createSession(sessionId string) {
+	session := Session{
+		ID: sessionId,
+	}
+	store.Sessions[sessionId] = session
 }
