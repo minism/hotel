@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 )
 
@@ -39,7 +40,9 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleCreateServer(w http.ResponseWriter, r *http.Request) {
+	session := context.Get(r, SessionContextKey).(Session)
 	server, err := DecodeAndValidateServer(r.Body)
+	server.SessionID = session.ID
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
@@ -54,34 +57,56 @@ func handleCreateServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
+	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
-		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, err := DecodeAndValidateServer(r.Body)
+	serverId := ServerIDType(id)
+	server, exists := getServerById(serverId)
+	if !exists {
+		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
+		return
+	}
+	if server.SessionID != session.ID {
+		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
+		return
+	}
+	newServer, err := DecodeAndValidateServer(r.Body)
 	if err != nil {
-		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, err = updateServerById(ServerIDType(id), server)
+	newServer, err = updateServerById(serverId, newServer)
 	if err != nil {
 		http.Error(w, "Failed to update server: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	json.NewEncoder(w).Encode(server)
+	json.NewEncoder(w).Encode(newServer)
 }
 
 func handleServerAlive(w http.ResponseWriter, r *http.Request) {
+	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
-		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	pingServerAlive(ServerIDType(id))
+	serverId := ServerIDType(id)
+	server, exists := getServerById(serverId)
+	if !exists {
+		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
+		return
+	}
+	if server.SessionID != session.ID {
+		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
+		return
+	}
+	updateServerAlive(serverId)
 	json.NewEncoder(w).Encode(ok)
 }

@@ -16,6 +16,7 @@ type ServerIDType int
 type GameServer struct {
 	ID         ServerIDType `json:"id"`
 	GameID     GameIDType   `json:"gameId"`
+	SessionID  int          `json:"-"`
 	Name       string       `json:"name"`
 	Host       string       `json:"host"`
 	Port       int          `json:"port"`

@@ -12,6 +12,8 @@ const (
 	SessionContextKey = 0
 )
 
+var nextSessionId int = 1
+
 // TODO: This should be externalized to filesystem or database at some point once
 // we need to run multiple instances.
 type SessionStore struct {
@@ -21,7 +23,10 @@ type SessionStore struct {
 
 type Session struct {
 	// The unique ID for the session.
-	ID string
+	ID int
+
+	// The token for the session.
+	Token string
 
 	// Servers owned by this session.
 	Servers []ServerIDType
@@ -49,20 +54,20 @@ func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 // client. For example, a game server will register itself and generate a session,
 // and only that server can update its status.
 func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request) {
-	var sessionId string
+	var sessionToken string
 	if session, exists := store.getSession(r); exists {
-		sessionId = session.ID
+		sessionToken = session.Token
 	} else {
 		var err error
-		sessionId, err = GenerateRandomB64String(32)
+		sessionToken, err = GenerateRandomB64String(32)
 		if err != nil {
 			log.Println("Error generating session ID: ", err)
 			http.Error(w, "Failed to identify.", http.StatusBadRequest)
 			return
 		}
-		store.createSession(sessionId)
+		store.createSession(sessionToken)
 	}
-	json.NewEncoder(w).Encode(sessionId)
+	json.NewEncoder(w).Encode(sessionToken)
 }
 
 func (store *SessionStore) getSession(r *http.Request) (Session, bool) {
@@ -74,9 +79,11 @@ func (store *SessionStore) getSession(r *http.Request) (Session, bool) {
 	return ret, false
 }
 
-func (store *SessionStore) createSession(sessionId string) {
+func (store *SessionStore) createSession(sessionToken string) {
 	session := Session{
-		ID: sessionId,
+		ID:    nextSessionId,
+		Token: sessionToken,
 	}
-	store.Sessions[sessionId] = session
+	nextSessionId++
+	store.Sessions[sessionToken] = session
 }

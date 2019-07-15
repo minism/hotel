@@ -18,6 +18,7 @@ func initDb() {
 		CREATE TABLE IF NOT EXISTS servers (
 			id INTEGER PRIMARY KEY,
 			game_id VARCHAR(256),
+			session_id INTEGER,
 			name VARCHAR(256),
 			host VARCHAR(256),
 			port INTEGER,
@@ -39,7 +40,7 @@ func initDb() {
 // TODO: Make private once package split happens
 func serverQuery(where string, args ...interface{}) []GameServer {
 	ret := make([]GameServer, 0)
-	q := "SELECT id, game_id, name, host, port, num_players, max_players FROM servers"
+	q := "SELECT id, game_id, session_id, name, host, port, num_players, max_players FROM servers"
 	if len(where) > 0 {
 		q = q + " " + where
 	}
@@ -55,7 +56,7 @@ func serverQuery(where string, args ...interface{}) []GameServer {
 	}
 	var s GameServer
 	for rows.Next() {
-		rows.Scan(&s.ID, &s.GameID, &s.Name, &s.Host, &s.Port, &s.NumPlayers, &s.MaxPlayers)
+		rows.Scan(&s.ID, &s.GameID, &s.SessionID, &s.Name, &s.Host, &s.Port, &s.NumPlayers, &s.MaxPlayers)
 		ret = append(ret, s)
 	}
 	return ret
@@ -76,14 +77,15 @@ func getServerById(id ServerIDType) (GameServer, bool) {
 
 func insertServer(server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
-		INSERT INTO servers (game_id, name, host, port, num_players, max_players)
-		VALUES (?, ?, ?, ?, ?, ?)`)
+		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players)
+		VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Println(err)
 		return server, errors.New("Failed to create server.")
 	}
 	res, err := stmt.Exec(
-		server.GameID, server.Name, server.Host, server.Port, server.NumPlayers, server.MaxPlayers)
+		server.GameID, server.SessionID, server.Name, server.Host, server.Port,
+		server.NumPlayers, server.MaxPlayers)
 	if err != nil {
 		log.Println(err)
 		return server, errors.New("Failed to create server.")
@@ -121,6 +123,6 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	return server, nil
 }
 
-func pingServerAlive(id ServerIDType) {
+func updateServerAlive(id ServerIDType) {
 
 }
