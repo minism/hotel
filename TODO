@@ -1,5 +1,8 @@
 - Implement NAT hole punching.
 - Metadata blob attached to servers.
+- Add game server spawning (large task)
+- Add expected game ID types to configuration for extra security.
+  - Spawning behavior could also be determined based on this config.
 
 Authentication requirements/research:
     - Should be generally hard to LIST/CREATE/SPAWN
