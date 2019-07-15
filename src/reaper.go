@@ -5,9 +5,9 @@ import (
 	"time"
 )
 
-var reaperInterval time.Duration = time.Second * 5
+var reaperInterval time.Duration = time.Second * 60
 var sessionAccessExpiry time.Duration = time.Minute * 15
-var gameServerAccessExpiry time.Duration = time.Second * 30
+var gameServerAccessExpiry time.Duration = time.Minute * 5
 
 func InitReaper(store *SessionStore) {
 	go func() {
