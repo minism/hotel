@@ -20,7 +20,9 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 func HandleListServers(w http.ResponseWriter, r *http.Request) {
 	gid := GameIDType(r.URL.Query().Get("gameId"))
 	servers := GetServersByGameId(gid)
-	json.NewEncoder(w).Encode(servers)
+	var response ListServersResponse
+	response.Servers = servers
+	json.NewEncoder(w).Encode(response)
 }
 
 func HandleGetServer(w http.ResponseWriter, r *http.Request) {

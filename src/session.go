@@ -74,7 +74,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 		store.CreateSession(sessionToken)
 	}
 
-	var response TokenResponse
+	var response IdentifyResponse
 	response.Token = sessionToken
 	json.NewEncoder(w).Encode(response)
 }

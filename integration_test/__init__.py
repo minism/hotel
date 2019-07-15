@@ -136,7 +136,7 @@ class IntegrationTest(unittest.TestCase):
         r = self.client.listServers('gid2')
         self.assertEqual(200, r.status_code)
 
-        serverNames = [obj['name'] for obj in r.json()]
+        serverNames = [obj['name'] for obj in r.json().get('servers')]
         self.assertEqual({'foo', 'bar'}, set(serverNames))
     
     def testCreateAndUpdate(self):
