@@ -2,7 +2,7 @@ package main
 
 import (
 	"crypto/rand"
-	"encoding/base64"
+	"encoding/base32"
 )
 
 func GenerateRandomBytes(length int) ([]byte, error) {
@@ -14,7 +14,8 @@ func GenerateRandomBytes(length int) ([]byte, error) {
 	return buf, nil
 }
 
-func GenerateRandomB64String(length int) (string, error) {
+func GenerateRandomB32String(length int) (string, error) {
+	encoder := base32.StdEncoding.WithPadding(base32.NoPadding)
 	buf, err := GenerateRandomBytes(length)
-	return base64.URLEncoding.EncodeToString(buf), err
+	return encoder.EncodeToString(buf), err
 }

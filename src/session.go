@@ -65,7 +65,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 		sessionToken = session.Token
 	} else {
 		var err error
-		sessionToken, err = GenerateRandomB64String(32)
+		sessionToken, err = GenerateRandomB32String(32)
 		if err != nil {
 			log.Println("Error generating session ID: ", err)
 			http.Error(w, "Failed to identify.", http.StatusBadRequest)
@@ -73,7 +73,10 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 		}
 		store.CreateSession(sessionToken)
 	}
-	json.NewEncoder(w).Encode(sessionToken)
+
+	var response TokenResponse
+	response.Token = sessionToken
+	json.NewEncoder(w).Encode(response)
 }
 
 func (store *SessionStore) CreateSession(sessionToken string) {

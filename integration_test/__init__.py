@@ -15,7 +15,7 @@ class Client(object):
 
     def identify(self):
         r = requests.post(url('/identify'))
-        self._token = r.json()
+        self._token = r.json().get('token')
         assert(self._token)
     
     def listServers(self, gameId):
