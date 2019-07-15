@@ -11,7 +11,7 @@ import (
 
 var db *sql.DB
 
-func initDb() {
+func InitDb() {
 	log.Println("Initializing database...")
 
 	db, _ = sql.Open("sqlite3", "./data.db")
@@ -39,36 +39,11 @@ func initDb() {
 	}
 }
 
-// TODO: Make private once package split happens
-func serverQuery(where string, args ...interface{}) []GameServer {
-	ret := make([]GameServer, 0)
-	q := "SELECT id, game_id, session_id, name, host, port, num_players, max_players FROM servers"
-	if len(where) > 0 {
-		q = q + " " + where
-	}
-	stmt, err := db.Prepare(q)
-	if err != nil {
-		log.Println(err)
-		return ret
-	}
-	rows, err := stmt.Query(args...)
-	if err != nil {
-		log.Println(err)
-		return ret
-	}
-	var s GameServer
-	for rows.Next() {
-		rows.Scan(&s.ID, &s.GameID, &s.SessionID, &s.Name, &s.Host, &s.Port, &s.NumPlayers, &s.MaxPlayers)
-		ret = append(ret, s)
-	}
-	return ret
-}
-
-func getServersByGameId(gid GameIDType) []GameServer {
+func GetServersByGameId(gid GameIDType) []GameServer {
 	return serverQuery("WHERE game_id = ?", gid)
 }
 
-func getServerById(id ServerIDType) (GameServer, bool) {
+func GetServerById(id ServerIDType) (GameServer, bool) {
 	var ret GameServer
 	servers := serverQuery("WHERE id = ?", id)
 	if len(servers) > 0 {
@@ -77,7 +52,7 @@ func getServerById(id ServerIDType) (GameServer, bool) {
 	return ret, false
 }
 
-func insertServer(server GameServer) (GameServer, error) {
+func InsertServer(server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
 		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players, last_modified)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
@@ -101,7 +76,7 @@ func insertServer(server GameServer) (GameServer, error) {
 	return server, nil
 }
 
-func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
+func UpdateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
 		UPDATE servers
 		SET name = ?,
@@ -127,7 +102,7 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	return server, nil
 }
 
-func updateServerAlive(id ServerIDType) error {
+func UpdateServerAlive(id ServerIDType) error {
 	stmt, err := db.Prepare(`
 		UPDATE servers
 		SET last_modified = ?
@@ -145,7 +120,7 @@ func updateServerAlive(id ServerIDType) error {
 	return nil
 }
 
-func deleteServersOlderThan(timestamp int64) error {
+func DeleteServersOlderThan(timestamp int64) error {
 	stmt, err := db.Prepare(`
 		DELETE FROM servers
 		WHERE last_modified < ?
@@ -164,4 +139,29 @@ func deleteServersOlderThan(timestamp int64) error {
 
 func getModifiedTime() int64 {
 	return time.Now().Unix()
+}
+
+// TODO: Make private once package split happens
+func serverQuery(where string, args ...interface{}) []GameServer {
+	ret := make([]GameServer, 0)
+	q := "SELECT id, game_id, session_id, name, host, port, num_players, max_players FROM servers"
+	if len(where) > 0 {
+		q = q + " " + where
+	}
+	stmt, err := db.Prepare(q)
+	if err != nil {
+		log.Println(err)
+		return ret
+	}
+	rows, err := stmt.Query(args...)
+	if err != nil {
+		log.Println(err)
+		return ret
+	}
+	var s GameServer
+	for rows.Next() {
+		rows.Scan(&s.ID, &s.GameID, &s.SessionID, &s.Name, &s.Host, &s.Port, &s.NumPlayers, &s.MaxPlayers)
+		ret = append(ret, s)
+	}
+	return ret
 }

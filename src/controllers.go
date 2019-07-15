@@ -13,17 +13,17 @@ const (
 	ok = "OK"
 )
 
-func handleHealth(w http.ResponseWriter, r *http.Request) {
+func HandleHealth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ok)
 }
 
-func handleListServers(w http.ResponseWriter, r *http.Request) {
+func HandleListServers(w http.ResponseWriter, r *http.Request) {
 	gid := GameIDType(r.URL.Query().Get("gameId"))
-	servers := getServersByGameId(gid)
+	servers := GetServersByGameId(gid)
 	json.NewEncoder(w).Encode(servers)
 }
 
-func handleGetServer(w http.ResponseWriter, r *http.Request) {
+func HandleGetServer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -31,7 +31,7 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, exists := getServerById(ServerIDType(id))
+	server, exists := GetServerById(ServerIDType(id))
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -39,7 +39,7 @@ func handleGetServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
-func handleCreateServer(w http.ResponseWriter, r *http.Request) {
+func HandleCreateServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	server, err := DecodeAndValidateServer(r.Body)
 	server.SessionID = session.ID
@@ -48,7 +48,7 @@ func handleCreateServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, err = insertServer(server)
+	server, err = InsertServer(server)
 	if err != nil {
 		http.Error(w, "Failed to create server: "+err.Error(), http.StatusBadRequest)
 		return
@@ -56,7 +56,7 @@ func handleCreateServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
-func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
+func HandleUpdateServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -66,7 +66,7 @@ func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	serverId := ServerIDType(id)
-	server, exists := getServerById(serverId)
+	server, exists := GetServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -80,7 +80,7 @@ func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	newServer, err = updateServerById(serverId, newServer)
+	newServer, err = UpdateServerById(serverId, newServer)
 	if err != nil {
 		http.Error(w, "Failed to update server: "+err.Error(), http.StatusBadRequest)
 		return
@@ -88,7 +88,7 @@ func handleUpdateServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(newServer)
 }
 
-func handleServerAlive(w http.ResponseWriter, r *http.Request) {
+func HandleServerAlive(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -98,7 +98,7 @@ func handleServerAlive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	serverId := ServerIDType(id)
-	server, exists := getServerById(serverId)
+	server, exists := GetServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -107,6 +107,6 @@ func handleServerAlive(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
 		return
 	}
-	updateServerAlive(serverId)
+	UpdateServerAlive(serverId)
 	json.NewEncoder(w).Encode(ok)
 }

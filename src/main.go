@@ -16,11 +16,11 @@ const (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	store := NewSessionStore()
-	initDb()
-	initReaper(store)
+	InitDb()
+	InitReaper(store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
-	mainRouter := handlers.LoggingHandler(os.Stdout, createRouter(store))
+	mainRouter := handlers.LoggingHandler(os.Stdout, CreateRouter(store))
 
 	// TODO: Run in goroutine with signal handling to not block
 	// https://github.com/gorilla/mux

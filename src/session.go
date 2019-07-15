@@ -71,9 +71,22 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 			http.Error(w, "Failed to identify.", http.StatusBadRequest)
 			return
 		}
-		store.createSession(sessionToken)
+		store.CreateSession(sessionToken)
 	}
 	json.NewEncoder(w).Encode(sessionToken)
+}
+
+func (store *SessionStore) CreateSession(sessionToken string) {
+	session := Session{
+		ID:    nextSessionId,
+		Token: sessionToken,
+	}
+	nextSessionId++
+	store.Sessions[sessionToken] = session
+}
+
+func (store *SessionStore) DeleteSession(sessionToken string) {
+	delete(store.Sessions, sessionToken)
 }
 
 func (store *SessionStore) loadSessionForRequest(r *http.Request) (Session, bool) {
@@ -85,13 +98,4 @@ func (store *SessionStore) loadSessionForRequest(r *http.Request) (Session, bool
 		return session, true
 	}
 	return ret, false
-}
-
-func (store *SessionStore) createSession(sessionToken string) {
-	session := Session{
-		ID:    nextSessionId,
-		Token: sessionToken,
-	}
-	nextSessionId++
-	store.Sessions[sessionToken] = session
 }
