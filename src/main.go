@@ -14,10 +14,14 @@ const (
 )
 
 func main() {
+	// Global configuration.
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
+	// Initialize main components.
 	store := NewSessionStore()
+	config := LoadConfig()
 	InitDb()
-	InitReaper(store)
+	InitReaper(config, store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	mainRouter := handlers.LoggingHandler(os.Stdout, CreateRouter(store))

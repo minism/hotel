@@ -1,7 +1,5 @@
 - Implement NAT hole punching.
 - Metadata blob attached to servers.
-- Reaper process that cleans up old servers
-- Reaper process that cleans up old sessions
 
 Authentication requirements/research:
     - Should be generally hard to LIST/CREATE/SPAWN
