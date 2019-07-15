@@ -5,8 +5,9 @@ import (
 	"time"
 )
 
-var reaperInterval time.Duration = time.Second * 60
+var reaperInterval time.Duration = time.Second * 5
 var sessionAccessExpiry time.Duration = time.Minute * 15
+var gameServerAccessExpiry time.Duration = time.Second * 30
 
 func initReaper(store *SessionStore) {
 	go func() {
@@ -28,5 +29,9 @@ func reapSessions(store *SessionStore) {
 }
 
 func reapServers() {
-
+	oldestTime := time.Now().Add(-gameServerAccessExpiry)
+	err := deleteServersOlderThan(oldestTime.Unix())
+	if err != nil {
+		log.Println(err)
+	}
 }

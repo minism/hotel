@@ -80,7 +80,7 @@ func getServerById(id ServerIDType) (GameServer, bool) {
 func insertServer(server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
 		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players, last_modified)
-		VALUES (?, ?, ?, ?, ?, ?, ?)`)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Println(err)
 		return server, errors.New("Failed to create server.")
@@ -108,7 +108,7 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 			host = ?,
 			port = ?,
 			num_players = ?,
-			max_players = ?
+			max_players = ?,
 			last_modified = ?
 		WHERE
 			id = ?
@@ -129,7 +129,7 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 
 func updateServerAlive(id ServerIDType) error {
 	stmt, err := db.Prepare(`
-		UPDATE SERVERS
+		UPDATE servers
 		SET last_modified = ?
 		WHERE id = ?
 	`)
@@ -145,7 +145,21 @@ func updateServerAlive(id ServerIDType) error {
 	return nil
 }
 
-func deleteServersOlderThan(timestamp int64) {
+func deleteServersOlderThan(timestamp int64) error {
+	stmt, err := db.Prepare(`
+		DELETE FROM servers
+		WHERE last_modified < ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete servers.")
+	}
+	_, err = stmt.Exec(timestamp)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete servers.")
+	}
+	return nil
 }
 
 func getModifiedTime() int64 {
