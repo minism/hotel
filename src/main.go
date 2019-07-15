@@ -21,7 +21,7 @@ func main() {
 	store := NewSessionStore()
 	config := LoadConfig()
 	InitDb()
-	InitReaper(config, store)
+	StartReaper(config, store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	mainRouter := handlers.LoggingHandler(os.Stdout, CreateRouter(store))

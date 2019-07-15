@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func InitReaper(config Config, store *SessionStore) {
+func StartReaper(config Config, store *SessionStore) {
 	go func() {
 		for {
 			reapSessions(config, store)
