@@ -1,3 +1,4 @@
+- Require HTTPS
 - Implement NAT hole punching.
 - Metadata blob attached to servers.
 - Add game server spawning (large task)
