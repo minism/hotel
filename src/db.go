@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -23,7 +24,8 @@ func initDb() {
 			host VARCHAR(256),
 			port INTEGER,
 			num_players INTEGER,
-			max_players INTEGER
+			max_players INTEGER,
+			last_modified INTEGER
 		);
 	`)
 	if err != nil {
@@ -77,7 +79,7 @@ func getServerById(id ServerIDType) (GameServer, bool) {
 
 func insertServer(server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
-		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players)
+		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players, last_modified)
 		VALUES (?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Println(err)
@@ -85,7 +87,7 @@ func insertServer(server GameServer) (GameServer, error) {
 	}
 	res, err := stmt.Exec(
 		server.GameID, server.SessionID, server.Name, server.Host, server.Port,
-		server.NumPlayers, server.MaxPlayers)
+		server.NumPlayers, server.MaxPlayers, getModifiedTime())
 	if err != nil {
 		log.Println(err)
 		return server, errors.New("Failed to create server.")
@@ -107,6 +109,7 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 			port = ?,
 			num_players = ?,
 			max_players = ?
+			last_modified = ?
 		WHERE
 			id = ?
 	`)
@@ -115,7 +118,8 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 		return server, errors.New("Failed to update server.")
 	}
 	_, err = stmt.Exec(
-		server.Name, server.Host, server.Port, server.NumPlayers, server.MaxPlayers, id)
+		server.Name, server.Host, server.Port, server.NumPlayers, server.MaxPlayers,
+		getModifiedTime(), id)
 	if err != nil {
 		log.Println(err)
 		return server, errors.New("Failed to update server.")
@@ -123,6 +127,27 @@ func updateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	return server, nil
 }
 
-func updateServerAlive(id ServerIDType) {
+func updateServerAlive(id ServerIDType) error {
+	stmt, err := db.Prepare(`
+		UPDATE SERVERS
+		SET last_modified = ?
+		WHERE id = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to update server.")
+	}
+	_, err = stmt.Exec(getModifiedTime(), id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to update server.")
+	}
+	return nil
+}
 
+func deleteServersOlderThan(timestamp int64) {
+}
+
+func getModifiedTime() int64 {
+	return time.Now().Unix()
 }

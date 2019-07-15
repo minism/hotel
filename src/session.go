@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/context"
 )
@@ -30,15 +31,20 @@ type Session struct {
 
 	// Servers owned by this session.
 	Servers []ServerIDType
+
+	// The last access time for the session.
+	LastAccess time.Time
 }
 
-func (store *SessionStore) Initialize() {
+func NewSessionStore() *SessionStore {
+	store := &SessionStore{}
 	store.Sessions = make(map[string]Session)
+	return store
 }
 
 func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if session, exists := store.getSession(r); exists {
+		if session, exists := store.loadSessionForRequest(r); exists {
 			context.Set(r, SessionContextKey, session)
 			next.ServeHTTP(w, r)
 		} else {
@@ -55,7 +61,7 @@ func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 // and only that server can update its status.
 func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request) {
 	var sessionToken string
-	if session, exists := store.getSession(r); exists {
+	if session, exists := store.loadSessionForRequest(r); exists {
 		sessionToken = session.Token
 	} else {
 		var err error
@@ -70,10 +76,12 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(sessionToken)
 }
 
-func (store *SessionStore) getSession(r *http.Request) (Session, bool) {
+func (store *SessionStore) loadSessionForRequest(r *http.Request) (Session, bool) {
 	var ret Session
 	token := r.Header.Get("X-Session-Token")
 	if session, exists := store.Sessions[token]; exists {
+		session.LastAccess = time.Now()
+		store.Sessions[token] = session
 		return session, true
 	}
 	return ret, false
