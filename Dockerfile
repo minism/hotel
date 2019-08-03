@@ -3,6 +3,9 @@
 # Start from golang v1.11 base image
 FROM golang:1.11
 
+# Tag the maintainer
+MAINTAINER joshbothun@gmail.com
+
 # Set the Current Working Directory inside the container
 WORKDIR /app
 
@@ -20,4 +23,4 @@ RUN make
 EXPOSE 3000
 
 # Run the executable
-CMD ["./server"]
+CMD ["./hotel"]
