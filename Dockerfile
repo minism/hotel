@@ -16,7 +16,7 @@ RUN go get -d -v ./...
 # Build the binary
 RUN make
 
-# This container exposes po 3000 to the outside world
+# The server runs on port 3000, so expose that.
 EXPOSE 3000
 
 # Run the executable
