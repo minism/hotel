@@ -1,26 +1,28 @@
 # Dockerfile References: https://docs.docker.com/engine/reference/builder/
 
-# Start from golang v1.11 base image
-FROM golang:1.11
+# This is an updated version of the docker file which assumes you are able to
+# build the binary artifact locally. Previous versions were dev environment
+# free and could be deployed from anywhere. The problem is simply that it
+# massively bloats the images, whereas this version *only* contains the
+# binary artifact. I'm still not sure what is the best practice to use.
 
-# Tag the maintainer
+# Use iron which is a tiny microcontainer image for production deployments.
+FROM iron/go
+
+# Tag the maintainer.
 MAINTAINER joshbothun@gmail.com
 
-# Set the Current Working Directory inside the container
+# Set the Current Working Directory inside the container.
 WORKDIR /app
 
-# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
-COPY . .
-
-# Download all the dependencies
-# https://stackoverflow.com/questions/28031603/what-do-three-dots-mean-in-go-command-line-invocations
-RUN go get -d -v ./...
-
-# Build the binary
-RUN make
+# Copy the binary to the working directory.
+COPY ./hotel .
 
 # The server runs on port 3000, so expose that.
 EXPOSE 3000
 
-# Run the executable
-CMD ["./hotel"]
+# Setup a volume.
+# VOLUME /data
+
+# Run the executable.
+ENTRYPOINT ["./hotel"]

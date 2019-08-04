@@ -1,0 +1,43 @@
+# Dockerfile References: https://docs.docker.com/engine/reference/builder/
+
+# This is a much larger dockerfile than the main one which will fully install
+# all dependencies and compile the application inside the container itself,
+# so that it can be built from any system.
+
+# It will result in a *much* larger target image, around 800MB, versus the
+# main deployment Dockerfile which results in a 10MB image.
+
+# The downside with the main Dockerfile is that you need to first build the
+# binary artifact locally.
+
+# TODO: Figure out what the right way to handle this workflow is. For example,
+# if the build/deploy is supposed to be handled by a build server then it
+# would be more convenient for it to use Dockerfile.full. However that creates
+# bloated images. How then should the build instructions be specified on the
+# build server?  It would need to have the prerequisites to first invoke the
+# make file and *then* build the docker container.  Maybe this is common.
+
+# Start from golang v1.11 base image
+FROM golang:1.11
+
+# Tag the maintainer
+MAINTAINER joshbothun@gmail.com
+
+# Set the Current Working Directory inside the container
+WORKDIR /app
+
+# Copy everything from the current directory to the PWD(Present Working Directory) inside the container
+COPY . .
+
+# Download all the dependencies
+# https://stackoverflow.com/questions/28031603/what-do-three-dots-mean-in-go-command-line-invocations
+RUN go get -d -v ./...
+
+# Build the binary
+RUN make
+
+# The server runs on port 3000, so expose that.
+EXPOSE 3000
+
+# Run the executable
+CMD ["./hotel"]
