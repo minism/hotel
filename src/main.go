@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,14 +14,17 @@ const (
 	DEFAULT_PORT = 3000
 )
 
+var configPath = flag.String("config_path", "./example.config.json", "Path to configuration file.")
+var dataPath = flag.String("data_path", ".", "Path to directory for storing data.")
+
 func main() {
 	// Global configuration.
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// Initialize main components.
 	store := NewSessionStore()
-	config := LoadConfig()
-	InitDb()
+	config := LoadConfig(*configPath)
+	InitDb(*dataPath)
 	StartReaper(config, store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)

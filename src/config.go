@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
-	"os"
 	"time"
 )
 
@@ -18,15 +17,7 @@ type SerializableDuration struct {
 	time.Duration
 }
 
-func LoadConfig() Config {
-	args := os.Args[1:]
-	var configPath string
-	if len(args) < 1 {
-		log.Println("Config file not given, using example.")
-		configPath = "example.config.json"
-	} else {
-		configPath = args[0]
-	}
+func LoadConfig(configPath string) Config {
 	return loadFromPath(configPath)
 }
 
@@ -53,6 +44,6 @@ func loadFromPath(path string) Config {
 	if err != nil {
 		log.Panicln("Could not load config:", err)
 	}
-	log.Printf("Loaded config %v\n", path)
+	log.Printf("Loaded config file %v\n", path)
 	return config
 }
