@@ -18,6 +18,8 @@ var configPath = flag.String("config_path", "./example.config.json", "Path to co
 var dataPath = flag.String("data_path", ".", "Path to directory for storing data.")
 
 func main() {
+	flag.Parse()
+
 	// Global configuration.
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 

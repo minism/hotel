@@ -14,7 +14,7 @@ var db *sql.DB
 
 func InitDb(dataPath string) {
 	dbPath := filepath.Join(dataPath, "data.db")
-	log.Println("Initializing database...")
+	log.Printf("Initializing database at %v...", dbPath)
 
 	db, _ = sql.Open("sqlite3", dbPath)
 	_, err := db.Exec(`
