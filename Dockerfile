@@ -50,4 +50,4 @@ EXPOSE 3000
 VOLUME /data
 
 # Run the executable.
-ENTRYPOINT ["./hotel", "--data-path=/data"]
+ENTRYPOINT ["./hotel", "--data_path=/data"]

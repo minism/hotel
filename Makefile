@@ -10,7 +10,7 @@ run: ${SRCS}
 deps:
 	dep ensure
 
-docker-image: deps ${TARGET}
+docker-image:
 	docker build -t hotel .
 
 docker-image-test: docker-image
