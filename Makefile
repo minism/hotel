@@ -26,7 +26,7 @@ docker-image-test: docker-image
 	docker run --rm hotel
 
 integration-test:
-	python integration_test/__init__.py
+	python test/integration_test.py
 
 clean:
 	rm -f ${MASTER_TARGET}
