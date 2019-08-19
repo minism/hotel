@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/gorilla/handlers"
+	"minornine.com/hotel/src/master"
 )
 
 const (
@@ -24,13 +25,13 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	// Initialize main components.
-	store := NewSessionStore()
-	config := LoadConfig(*configPath)
-	InitDb(*dataPath)
-	StartReaper(config, store)
+	store := master.NewSessionStore()
+	config := master.LoadConfig(*configPath)
+	master.InitDb(*dataPath)
+	master.StartReaper(config, store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
-	mainRouter := handlers.LoggingHandler(os.Stdout, CreateRouter(store))
+	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(store))
 
 	// TODO: Run in goroutine with signal handling to not block
 	// https://github.com/gorilla/mux

@@ -1,4 +1,4 @@
-package main
+package master
 
 type IdentifyResponse struct {
 	Token string `json:"token"`

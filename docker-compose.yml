@@ -1,0 +1,6 @@
+version: '3'
+services:
+  master:
+    build: 
+      context: .
+      dockerfile: ./services/master/Dockerfile
