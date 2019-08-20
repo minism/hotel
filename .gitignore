@@ -1,7 +1,8 @@
 .git
 .DS_Store
 vendor
-hotel
+hotel-master
+hotel-spawner
 hotel-image.tar*
 data.db
 

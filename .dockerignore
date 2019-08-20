@@ -1,6 +1,7 @@
 .git
 .DS_Store
-hotel
+hotel-master
+hotel-spawner
 hotel-image.tar*
 data.db
 
