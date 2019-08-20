@@ -49,5 +49,9 @@ EXPOSE 3000
 # Setup a volume.
 VOLUME /data
 
+# Specify default environment variables.
+ENV HOTEL_DATA_PATH /data
+ENV HOTEL_CONFIG_PATH /data/example.config.json
+
 # Run the executable.
-ENTRYPOINT ["./hotel-master", "--data_path=/data"]
+CMD ["./hotel-master"]

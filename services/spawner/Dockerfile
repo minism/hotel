@@ -43,5 +43,8 @@ COPY --from=builder /build/hotel-spawner  .
 # The server runs on port 3001, so expose that.
 EXPOSE 3001
 
+# Specify default environment variables.
+ENV HOTEL_SPAWNER_MAX_SERVERS 5
+
 # Run the executable.
-ENTRYPOINT ["./hotel-spawner", "--data_path=/data"]
+CMD ["./hotel-spawner"]

@@ -16,8 +16,8 @@ const (
 	DEFAULT_PORT = 3000
 )
 
-var configPath = flag.String("config_path", "./example.config.json", "Path to configuration file.")
-var dataPath = flag.String("data_path", ".", "Path to directory for storing data.")
+var dataPath = shared.GetEnv("HOTEL_DATA_PATH", ".")
+var configPath = shared.GetEnv("HOTEL_CONFIG_PATH", "./example.config.json")
 
 func main() {
 	flag.Parse()
@@ -25,8 +25,8 @@ func main() {
 
 	// Initialize main components.
 	store := master.NewSessionStore()
-	config := master.LoadConfig(*configPath)
-	master.InitDb(*dataPath)
+	config := master.LoadConfig(configPath)
+	master.InitDb(dataPath)
 	master.StartReaper(config, store)
 
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
