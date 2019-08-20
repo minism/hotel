@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package proto;
+
+service SpawnerService {
+    rpc Test(TestRequest) returns (TestResponse) {}
+}
+
+message TestRequest {
+    string body = 1;
+}
+
+message TestResponse {
+    Status status = 1;
+}
+
+enum Status {
+    OK = 0;
+}

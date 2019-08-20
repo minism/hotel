@@ -1,4 +1,6 @@
 SRCS=$(wildcard src/*/*.go)
+PROTO_SRCS=$(wildcard proto/*.proto)
+PROTO_OUTS=$(patsubst proto/%.proto, src/proto/%.pb.go, $(PROTO_SRCS))
 MASTER_MAIN=services/master/main.go
 MASTER_TARGET=hotel-master
 SPAWNER_MAIN=services/spawner/main.go
@@ -10,6 +12,10 @@ ${MASTER_TARGET}: ${MASTER_MAIN} ${SRCS} deps
 ${SPAWNER_TARGET}: ${SPAWNER_MAIN} ${SRCS} deps
 	go build -o $@ $<
 
+${PROTO_OUTS}: ${PROTO_SRCS}
+	mkdir -p src/proto
+	protoc -I=proto --go_out=src/proto $^
+
 run-master: ${MASTER_MAIN} ${SRCS} deps
 	go run $<
 
@@ -18,6 +24,8 @@ run-spawner: ${SPAWNER_MAIN} ${SRCS} deps
 
 deps:
 	dep ensure
+
+protos: ${PROTO_OUTS}
 
 docker-images:
 	docker-compose build
@@ -29,3 +37,4 @@ clean:
 	rm -f ${MASTER_TARGET}
 	rm -f ${SPAWNER_TARGET}
 	rm -f data.db
+
