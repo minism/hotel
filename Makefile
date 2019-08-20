@@ -6,10 +6,10 @@ MASTER_TARGET=hotel-master
 SPAWNER_MAIN=services/spawner/main.go
 SPAWNER_TARGET=hotel-spawner
 
-${MASTER_TARGET}: ${MASTER_MAIN} ${SRCS} deps
+${MASTER_TARGET}: ${MASTER_MAIN} ${SRCS} ${PROTO_OUTS}
 	go build -o $@ $<
 
-${SPAWNER_TARGET}: ${SPAWNER_MAIN} ${SRCS} deps
+${SPAWNER_TARGET}: ${SPAWNER_MAIN} ${SRCS} ${PROTO_OUTS}
 	go build -o $@ $<
 
 ${PROTO_OUTS}: ${PROTO_SRCS}
