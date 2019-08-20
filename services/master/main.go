@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"minornine.com/hotel/src/master"
+	"minornine.com/hotel/src/shared"
 )
 
 const (
@@ -20,9 +21,7 @@ var dataPath = flag.String("data_path", ".", "Path to directory for storing data
 
 func main() {
 	flag.Parse()
-
-	// Global configuration.
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	shared.InitLogging()
 
 	// Initialize main components.
 	store := master.NewSessionStore()
