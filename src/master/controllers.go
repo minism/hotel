@@ -14,6 +14,7 @@ const (
 )
 
 func HandleHealth(w http.ResponseWriter, r *http.Request) {
+	SendTestSpawnerRequest()
 	json.NewEncoder(w).Encode(ok)
 }
 

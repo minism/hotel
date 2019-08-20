@@ -14,12 +14,12 @@ ${SPAWNER_TARGET}: ${SPAWNER_MAIN} ${SRCS} ${PROTO_OUTS}
 
 ${PROTO_OUTS}: ${PROTO_SRCS}
 	mkdir -p src/proto
-	protoc -I=proto --go_out=src/proto $^
+	protoc --go_out=plugins=grpc:src $^
 
-run-master: ${MASTER_MAIN} ${SRCS} deps
+run-master: ${MASTER_MAIN} ${SRCS} ${PROTO_OUTS}
 	go run $<
 
-run-spawner: ${SPAWNER_MAIN} ${SRCS} deps
+run-spawner: ${SPAWNER_MAIN} ${SRCS} ${PROTO_OUTS}
 	go run $<
 
 deps:
@@ -37,4 +37,3 @@ clean:
 	rm -f ${MASTER_TARGET}
 	rm -f ${SPAWNER_TARGET}
 	rm -f data.db
-
