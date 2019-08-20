@@ -19,8 +19,8 @@ run-spawner: ${SPAWNER_MAIN} ${SRCS} deps
 deps:
 	dep ensure
 
-docker-image:
-	docker build -t hotel .
+docker-images:
+	docker-compose build
 
 integration-test:
 	python test/integration_test.py
