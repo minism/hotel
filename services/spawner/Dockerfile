@@ -40,5 +40,8 @@ WORKDIR /app
 # Copy the artifact from the first stage.
 COPY --from=builder /build/hotel-spawner  .
 
+# The server runs on port 3001, so expose that.
+EXPOSE 3001
+
 # Run the executable.
 ENTRYPOINT ["./hotel-spawner", "--data_path=/data"]
