@@ -22,9 +22,6 @@ deps:
 docker-image:
 	docker build -t hotel .
 
-docker-image-test: docker-image
-	docker run --rm hotel
-
 integration-test:
 	python test/integration_test.py
 

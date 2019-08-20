@@ -25,7 +25,7 @@ COPY . .
 RUN go get -d -v ./...
 
 # Build the artifact.
-RUN go build -o /build/hotel-master services/master/main.go
+RUN go build -o /build/hotel-spawner services/spawner/main.go
 
 #####################################################################
 # The second stage produces the runtime image which is the minimal
@@ -38,16 +38,7 @@ FROM alpine
 WORKDIR /app
 
 # Copy the artifact from the first stage.
-COPY --from=builder /build/hotel-master  .
-
-# Copy the default config to the working directory.
-COPY example.config.json .
-
-# The server runs on port 3000, so expose that.
-EXPOSE 3000
-
-# Setup a volume.
-VOLUME /data
+COPY --from=builder /build/hotel-spawner  .
 
 # Run the executable.
-ENTRYPOINT ["./hotel-master", "--data_path=/data"]
+ENTRYPOINT ["./hotel-spawner", "--data_path=/data"]

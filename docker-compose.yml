@@ -4,3 +4,7 @@ services:
     build: 
       context: .
       dockerfile: ./services/master/Dockerfile
+  spawner:
+    build: 
+      context: .
+      dockerfile: ./services/spawner/Dockerfile
