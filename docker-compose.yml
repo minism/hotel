@@ -1,10 +1,18 @@
-version: '3'
+version: "3"
 services:
   master:
     build: 
       context: .
       dockerfile: ./services/master/Dockerfile
+    deploy:
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "3000:3000"
   spawner:
     build: 
       context: .
       dockerfile: ./services/spawner/Dockerfile
+    deploy:
+      restart_policy:
+        condition: on-failure
