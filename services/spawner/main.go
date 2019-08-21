@@ -38,7 +38,7 @@ func main() {
 
 	// Install all RPC handlers.
 	grpcServer := grpc.NewServer()
-	proto.RegisterSpawnerServiceServer(grpcServer, &spawner.TestService{})
+	hotel_pb.RegisterSpawnerServiceServer(grpcServer, &spawner.SpawnerService{})
 
 	log.Println("Running gRPC server on", addr)
 	grpcServer.Serve(listener)

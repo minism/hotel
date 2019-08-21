@@ -27,9 +27,7 @@ func SendTestSpawnerRequest() {
 	}
 	defer conn.Close()
 
-	client := proto.NewSpawnerServiceClient(conn)
-	response, err := client.Test(context.Background(), &proto.TestRequest{
-		Body: "test",
-	})
+	client := hotel_pb.NewSpawnerServiceClient(conn)
+	response, err := client.CheckStatus(context.Background(), &hotel_pb.CheckStatusRequest{})
 	fmt.Println(response)
 }
