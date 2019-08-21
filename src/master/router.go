@@ -12,10 +12,10 @@ func CreateRouter(store *SessionStore) *mux.Router {
 	// Authenticated routes.
 	authRouter := router.PathPrefix("/").Subrouter()
 	authRouter.Use(store.Middleware)
-	authRouter.HandleFunc("/servers", HandleListServers).Methods("GET")
-	authRouter.HandleFunc("/servers/{id}", HandleGetServer).Methods("GET")
-	authRouter.HandleFunc("/servers", HandleCreateServer).Methods("POST")
-	authRouter.HandleFunc("/servers/{id}", HandleUpdateServer).Methods("PUT")
+	authRouter.HandleFunc("/servers", HandleListGameServers).Methods("GET")
+	authRouter.HandleFunc("/servers/{id}", HandleGetGameServer).Methods("GET")
+	authRouter.HandleFunc("/servers", HandleCreateGameServer).Methods("POST")
+	authRouter.HandleFunc("/servers/{id}", HandleUpdateGameServer).Methods("PUT")
 
 	return router
 }

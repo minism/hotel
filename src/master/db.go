@@ -41,11 +41,11 @@ func InitDb(dataPath string) {
 	}
 }
 
-func GetServersByGameId(gid GameIDType) []GameServer {
+func DbGetGameServersByGameId(gid GameIDType) []GameServer {
 	return serverQuery("WHERE game_id = ?", gid)
 }
 
-func GetServerById(id ServerIDType) (GameServer, bool) {
+func DbGetGameServerById(id ServerIDType) (GameServer, bool) {
 	var ret GameServer
 	servers := serverQuery("WHERE id = ?", id)
 	if len(servers) > 0 {
@@ -54,7 +54,7 @@ func GetServerById(id ServerIDType) (GameServer, bool) {
 	return ret, false
 }
 
-func InsertServer(server GameServer) (GameServer, error) {
+func DbInsertGameServer(server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
 		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players, last_modified)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
@@ -78,7 +78,7 @@ func InsertServer(server GameServer) (GameServer, error) {
 	return server, nil
 }
 
-func UpdateServerById(id ServerIDType, server GameServer) (GameServer, error) {
+func DbUpdateGameServerById(id ServerIDType, server GameServer) (GameServer, error) {
 	stmt, err := db.Prepare(`
 		UPDATE servers
 		SET name = ?,
@@ -102,24 +102,6 @@ func UpdateServerById(id ServerIDType, server GameServer) (GameServer, error) {
 		return server, errors.New("Failed to update server.")
 	}
 	return server, nil
-}
-
-func UpdateServerAlive(id ServerIDType) error {
-	stmt, err := db.Prepare(`
-		UPDATE servers
-		SET last_modified = ?
-		WHERE id = ?
-	`)
-	if err != nil {
-		log.Println(err)
-		return errors.New("Failed to update server.")
-	}
-	_, err = stmt.Exec(getModifiedTime(), id)
-	if err != nil {
-		log.Println(err)
-		return errors.New("Failed to update server.")
-	}
-	return nil
 }
 
 func DeleteServersOlderThan(timestamp int64) error {

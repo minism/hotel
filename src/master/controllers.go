@@ -18,15 +18,15 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ok)
 }
 
-func HandleListServers(w http.ResponseWriter, r *http.Request) {
+func HandleListGameServers(w http.ResponseWriter, r *http.Request) {
 	gid := GameIDType(r.URL.Query().Get("gameId"))
-	servers := GetServersByGameId(gid)
+	servers := DbGetGameServersByGameId(gid)
 	var response ListServersResponse
 	response.Servers = servers
 	json.NewEncoder(w).Encode(response)
 }
 
-func HandleGetServer(w http.ResponseWriter, r *http.Request) {
+func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -34,7 +34,7 @@ func HandleGetServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, exists := GetServerById(ServerIDType(id))
+	server, exists := DbGetGameServerById(ServerIDType(id))
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -42,16 +42,16 @@ func HandleGetServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
-func HandleCreateServer(w http.ResponseWriter, r *http.Request) {
+func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
-	server, err := DecodeAndValidateServer(r.Body)
+	server, err := DecodeAndValidateGameServer(r.Body)
 	server.SessionID = session.ID
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, err = InsertServer(server)
+	server, err = DbInsertGameServer(server)
 	if err != nil {
 		http.Error(w, "Failed to create server: "+err.Error(), http.StatusBadRequest)
 		return
@@ -59,7 +59,7 @@ func HandleCreateServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
-func HandleUpdateServer(w http.ResponseWriter, r *http.Request) {
+func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -69,7 +69,7 @@ func HandleUpdateServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	serverId := ServerIDType(id)
-	server, exists := GetServerById(serverId)
+	server, exists := DbGetGameServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -78,12 +78,12 @@ func HandleUpdateServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
 		return
 	}
-	newServer, err := DecodeAndValidateServer(r.Body)
+	newServer, err := DecodeAndValidateGameServer(r.Body)
 	if err != nil {
 		http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	newServer, err = UpdateServerById(serverId, newServer)
+	newServer, err = DbUpdateGameServerById(serverId, newServer)
 	if err != nil {
 		http.Error(w, "Failed to update server: "+err.Error(), http.StatusBadRequest)
 		return

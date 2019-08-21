@@ -161,6 +161,23 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(200, r.status_code)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
+
+    def testCreateAndUpdateSubsetFields(self):
+        r = self.client.create({
+            'name': 'original',
+            'gameId': 'gid',
+            'host': 'www.google.com',
+            'port': 1000,
+        })
+        self.assertEqual(200, r.status_code)
+        server_id = r.json().get('id')
+
+        r = self.client.update(server_id, {
+            'port': 1001,
+        })
+        self.assertEqual(200, r.status_code)
+        self.assertEqual('original', r.json().get('name'))
+        self.assertEqual(1001, r.json().get('port'))
     
     def testCantUpdateOtherServer(self):
         # Test that we cant modify a server not owned by this session.

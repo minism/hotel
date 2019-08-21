@@ -26,7 +26,7 @@ type GameServer struct {
 
 // Decode a JSON version of GameServer, validate it, and return it.
 // If any steps fail, returns an error.
-func DecodeAndValidateServer(reader io.Reader) (GameServer, error) {
+func DecodeAndValidateGameServer(reader io.Reader) (GameServer, error) {
 	decoder := json.NewDecoder(reader)
 	var server GameServer
 	err := decoder.Decode(&server)
