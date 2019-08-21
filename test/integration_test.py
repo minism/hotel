@@ -185,6 +185,10 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(200, r.status_code)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
+
+        # An "Empty" update request should suffice to just ping the server being alive.
+        r = self.client.update(server_id, {})
+        self.assertEqual(200, r.status_code)
     
     def testCantUpdateOtherServer(self):
         # Test that we cant modify a server not owned by this session.
