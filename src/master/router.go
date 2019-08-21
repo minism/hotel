@@ -16,7 +16,6 @@ func CreateRouter(store *SessionStore) *mux.Router {
 	authRouter.HandleFunc("/servers/{id}", HandleGetServer).Methods("GET")
 	authRouter.HandleFunc("/servers", HandleCreateServer).Methods("POST")
 	authRouter.HandleFunc("/servers/{id}", HandleUpdateServer).Methods("PUT")
-	authRouter.HandleFunc("/servers/{id}/alive", HandleServerAlive).Methods("PUT")
 
 	return router
 }

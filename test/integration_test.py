@@ -162,22 +162,6 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
     
-    def testCreateAndPingAlive(self):
-        r = self.client.create({
-            'name': 'original',
-            'gameId': 'gid',
-            'host': 'www.google.com',
-            'port': 1000,
-        })
-        self.assertEqual(200, r.status_code)
-        server_id = r.json().get('id')
-
-        r = self.client.alive(server_id)
-        self.assertEqual(200, r.status_code)
-
-        r = self.client.alive(server_id)
-        self.assertEqual(200, r.status_code)
-
     def testCantUpdateOtherServer(self):
         # Test that we cant modify a server not owned by this session.
         r = self.client.create({

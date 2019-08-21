@@ -90,26 +90,3 @@ func HandleUpdateServer(w http.ResponseWriter, r *http.Request) {
 	}
 	json.NewEncoder(w).Encode(newServer)
 }
-
-func HandleServerAlive(w http.ResponseWriter, r *http.Request) {
-	session := context.Get(r, SessionContextKey).(Session)
-	vars := mux.Vars(r)
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		// TODO: Full error object should not be returned in production mode
-		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
-		return
-	}
-	serverId := ServerIDType(id)
-	server, exists := GetServerById(serverId)
-	if !exists {
-		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
-		return
-	}
-	if server.SessionID != session.ID {
-		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
-		return
-	}
-	UpdateServerAlive(serverId)
-	json.NewEncoder(w).Encode(ok)
-}
