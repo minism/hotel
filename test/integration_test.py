@@ -178,6 +178,13 @@ class IntegrationTest(unittest.TestCase):
         self.assertEqual(200, r.status_code)
         self.assertEqual('original', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
+
+        r = self.client.update(server_id, {
+            'name': 'new name',
+        })
+        self.assertEqual(200, r.status_code)
+        self.assertEqual('new name', r.json().get('name'))
+        self.assertEqual(1001, r.json().get('port'))
     
     def testCantUpdateOtherServer(self):
         # Test that we cant modify a server not owned by this session.
