@@ -36,6 +36,17 @@ Authentication requirements/research:
             https://docs.unity3d.com/ScriptReference/Networking.NetworkTransport.ReceiveFromHost.html
           Can this be spoofed?
     - Conclusion: Will go with a simple session ID system.
-        
 
-
+Game server hosting models which hotel can support:
+    - Persistent client-server
+        - A static or dynamic number of game servers are hosted server side (facilitated by the spawner)
+          and are registered with the master server. Clients connect with these servers by discovering
+          them via the master server. No NAT issues are necessary since hotel will ensure the game servers
+          have public connectable ports.
+    - Client initiated: Peer-to-peer
+        - Clients create game servers and register them with the master server.  Other clients can
+          connect directly with these servers by discovering them via the master server.  The master
+          server can additionally assist with NAT hole-punching to establish the initial connection.
+    - Client initiated: Client-server
+        - Clients create game servers by requesting that one be spawned for them server side. The request
+          is sent through the master server which RPCs to the spawner to spin up a new instance.
