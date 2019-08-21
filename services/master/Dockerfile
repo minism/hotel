@@ -40,8 +40,8 @@ WORKDIR /app
 # Copy the artifact from the first stage.
 COPY --from=builder /build/hotel-master  .
 
-# Copy the default config to the working directory.
-COPY example.config.json .
+# Copy the default config to the data directory.
+COPY default.config.json /data/config.json
 
 # The server runs on port 3000, so expose that.
 EXPOSE 3000
@@ -51,7 +51,7 @@ VOLUME /data
 
 # Specify default environment variables.
 ENV HOTEL_DATA_PATH /data
-ENV HOTEL_CONFIG_PATH /data/example.config.json
+ENV HOTEL_CONFIG_PATH /data/config.json
 
 # Run the executable.
 CMD ["./hotel-master"]
