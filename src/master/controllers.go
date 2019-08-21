@@ -1,6 +1,7 @@
 package master
 
 import (
+	"log"
 	"encoding/json"
 	"net/http"
 	"strconv"
@@ -45,7 +46,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	server, err := DecodeAndValidateGameServer(r.Body, false)
-	server.SessionID = session.ID
+	fillImplicitGameServerFields(&server, r, session)
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
@@ -90,4 +91,13 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	json.NewEncoder(w).Encode(existingServer)
+}
+
+func fillImplicitGameServerFields(server *GameServer, r *http.Request, session Session) {
+	server.SessionID = session.ID
+	if len(server.Host) < 1 {
+		// If the host was not provided, assume the host is the request origin.
+		log.Printf("Host not specified, inferring from request origin: %v", r.RemoteAddr)
+		server.Host = r.RemoteAddr
+	}
 }
