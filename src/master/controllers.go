@@ -1,6 +1,7 @@
 package master
 
 import (
+	"strings"
 	"log"
 	"encoding/json"
 	"net/http"
@@ -96,6 +97,11 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 func fillImplicitGameServerFields(server *GameServer, r *http.Request, session Session) {
 	server.SessionID = session.ID
 	if len(server.Host) < 1 {
+		clientAddr := r.Header.Get("X-Forwarded-For")
+		if len(clientAddr) < 1 {
+			clientAddr = r.RemoteAddr
+		}
+		clientAddr = strings.Split(clientAddr, ":")[0]
 		// If the host was not provided, assume the host is the request origin.
 		log.Printf("Host not specified, inferring from request origin: %v", r.RemoteAddr)
 		server.Host = r.RemoteAddr
