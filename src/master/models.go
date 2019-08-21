@@ -44,6 +44,9 @@ func (s *GameServer) Validate(isUpdate bool) error {
 	if !isUpdate && len(s.Name) < 1 {
 		return errors.New("Name must be non-empty.")
 	}
+	if !isUpdate && s.Port < 1 || s.Port > 65535 {
+		return errors.New("Port not in range.")
+	}
 	return nil
 }
 
