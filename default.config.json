@@ -1,5 +1,5 @@
 {
     "reaperInterval": "60s",
     "sessionExpiration": "10m",
-    "serverExpiration": "5m"
+    "serverExpiration": "60s"
 }
