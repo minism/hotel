@@ -16,7 +16,6 @@ func StartReaper(config Config, store *SessionStore) {
 }
 
 func reapSessions(config Config, store *SessionStore) {
-	log.Println("Checking state to reap, num sessions: ", len(store.Sessions))
 	for token, session := range store.Sessions {
 		if time.Now().Sub(session.LastAccess) > config.SessionExpiration.Duration {
 			store.DeleteSession(token)
