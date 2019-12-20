@@ -13,15 +13,6 @@ const (
 	SessionContextKey = 0
 )
 
-var nextSessionId int = 1
-
-// TODO: This should be externalized to filesystem or database at some point once
-// we need to run multiple instances.
-type SessionStore struct {
-	// Mapping from session token to session data.
-	Sessions map[string]Session
-}
-
 type Session struct {
 	// The unique ID for the session.
 	ID int
@@ -30,10 +21,26 @@ type Session struct {
 	Token string
 
 	// Servers owned by this session.
-	Servers []ServerIDType
+	Servers map[ServerIDType]bool
 
 	// The last access time for the session.
 	LastAccess time.Time
+}
+
+func (session *Session) OwnsServerId(id ServerIDType) bool {
+	if ok, exists := session.Servers[id]; exists {
+		return ok
+	}
+	return false
+}
+
+var nextSessionId int = 1
+
+// TODO: This should be externalized to filesystem or database at some point once
+// we need to run multiple instances.
+type SessionStore struct {
+	// Mapping from session token to session data.
+	Sessions map[string]Session
 }
 
 func NewSessionStore() *SessionStore {
@@ -83,6 +90,7 @@ func (store *SessionStore) CreateSession(sessionToken string) {
 	session := Session{
 		ID:    nextSessionId,
 		Token: sessionToken,
+		Servers: make(map[ServerIDType]bool),
 	}
 	nextSessionId++
 	store.Sessions[sessionToken] = session

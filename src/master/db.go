@@ -104,6 +104,23 @@ func DbUpdateGameServerById(id ServerIDType, server GameServer) (GameServer, err
 	return server, nil
 }
 
+func DbDeleteGameServerById(id ServerIDType) error {
+	stmt, err := db.Prepare(`
+		DELETE FROM servers
+		WHERE id = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete server.")
+	}
+	_, err = stmt.Exec(id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete server.")
+	}
+	return nil
+}
+
 func DeleteServersOlderThan(timestamp int64) error {
 	stmt, err := db.Prepare(`
 		DELETE FROM servers

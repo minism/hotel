@@ -55,7 +55,7 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	}
 	server, err = DbInsertGameServer(server)
 	if err != nil {
-		http.Error(w, "Failed to create server: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to create server: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(server)
@@ -88,10 +88,36 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 	existingServer.Merge(newServer)
 	newServer, err = DbUpdateGameServerById(serverId, existingServer)
 	if err != nil {
-		http.Error(w, "Failed to update server: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to update server: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(existingServer)
+}
+
+func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
+	session := context.Get(r, SessionContextKey).(Session)
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		// TODO: Full error object should not be returned in production mode
+		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	serverId := ServerIDType(id)
+	existingServer, exists := DbGetGameServerById(serverId)
+	if !exists {
+		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
+		return
+	}
+	if existingServer.SessionID != session.ID {
+		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
+		return
+	}
+
+	err = DbDeleteGameServerById(serverId)
+	if err != nil {
+		http.Error(w, "Failed to delete server: "+err.Error(), http.StatusInternalServerError);
+	}
 }
 
 func fillImplicitGameServerFields(server *GameServer, r *http.Request, session Session) {
