@@ -29,11 +29,17 @@ func main() {
 	master.InitDb(dataPath)
 	master.StartReaper(config, store)
 
+	// Run the HTTP server in a goroutine.
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(store))
-
-	// TODO: Run in goroutine with signal handling to not block
-	// https://github.com/gorilla/mux
 	log.Println("Running server on", addr)
-	log.Fatal(http.ListenAndServe(addr, mainRouter))
+	go func() {
+		log.Fatal(http.ListenAndServe(addr, mainRouter))
+	}()
+
+	// Setup a SIGINT (CTRL+C) shutdown signal and block on it.
+	c := shared.CreateSigintChannel()
+	<-c
+	log.Println("Shutting down.")
+	os.Exit(0)
 }
