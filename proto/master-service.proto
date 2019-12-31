@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "proto/common.proto";
+
+package hotel_pb;
+
+service MasterService {
+  // Notify the master service that a spawner is available. This is used
+  // instead of some service discovery mechanism by the master.
+  rpc RegisterSpawner(RegisterSpawnerRequest) returns (RegisterSpawnerResponse) {}
+}
+
+message RegisterSpawnerRequest {
+  
+}
+
+message RegisterSpawnerResponse {
+  Status status = 1;
+}

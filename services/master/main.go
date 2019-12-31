@@ -1,9 +1,12 @@
 package main
 
 import (
+	// "google.golang.org/grpc"
+	// "minornine.com/hotel/src/proto"
 	"flag"
 	"fmt"
-	"log"
+  "log"
+  // "net"
 	"net/http"
 	"os"
 
@@ -13,7 +16,8 @@ import (
 )
 
 const (
-	DEFAULT_PORT = 3000
+	DEFAULT_HTTP_PORT = 3000
+	DEFAULT_RPC_PORT = 3001
 )
 
 var dataPath = shared.GetEnv("HOTEL_DATA_PATH", ".")
@@ -29,13 +33,26 @@ func main() {
 	master.InitDb(dataPath)
 	master.StartReaper(config, store)
 
-	// Run the HTTP server in a goroutine.
-	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
+	// Start the HTTP server in a goroutine.
+	addr := fmt.Sprintf(":%v", DEFAULT_HTTP_PORT)
 	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(store))
-	log.Println("Running server on", addr)
+	log.Println("Running HTTP server on", addr)
 	go func() {
 		log.Fatal(http.ListenAndServe(addr, mainRouter))
 	}()
+
+  // Start the RPC server in a goroutine.
+  // addr = fmt.Sprintf(":%v", DEFAULT_RPC_PORT)
+  // tcpListener, err := net.Listen("tcp", addr)
+  // if err != nil {
+  //   panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
+  // }
+  // grpcServer := grpc.NewServer()
+  // hotel_pb.RegisterMasterServiceServer(grpcServer, &master.MasterService{})
+  // log.Println("Running RPC server on", addr)
+  // go func() {
+  //   log.Fatal(grpcServer.Serve(tcpListener))
+  // }()
 
 	// Setup a SIGINT (CTRL+C) shutdown signal and block on it.
 	c := shared.CreateSigintChannel()

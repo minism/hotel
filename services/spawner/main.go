@@ -17,6 +17,7 @@ const (
 	DEFAULT_PORT = 3001
 )
 
+var masterServerAddress = shared.GetEnv("HOTEL_MASTER_ADDRESS", "")
 var maxServersVar = shared.GetEnv("HOTEL_SPAWNER_MAX_SERVERS", "5")
 
 func main() {
@@ -27,13 +28,16 @@ func main() {
 	if err != nil {
 		panic(fmt.Sprintf("Unable to parse HOTEL_SPAWNER_MAX_SERVERS: %v", maxServersVar))
 	}
+	if masterServerAddress == "" {
+		panic("Must provide HOTEL_MASTER_ADDRESS environment variable.")
+	}
 	log.Printf("Spawner configured to handle %v max servers.", maxServers)
 
 	// Start a TCP server and connect gRPC to it.
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		panic(fmt.Sprintf("Error listening to %v", addr))
+    panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
 	}
 
 	// Install all RPC handlers.
