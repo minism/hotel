@@ -26,6 +26,9 @@ class Client(object):
 
     def create(self, data):
         return requests.post(url('/servers'), json=data, headers=self._headers)
+    
+    def spawn(self, gameId):
+        return requests.post(url('/spawn?gameId=%s' % gameId), headers=self._headers)
 
     def update(self, sid, data):
         return requests.put(url('/servers/%s' % sid), json=data, headers=self._headers)
@@ -232,6 +235,10 @@ class IntegrationTest(unittest.TestCase):
             'port': 1000,
         })
         self.assertEqual(403, r.status_code)
+    
+    def testCantSpawnByDefault(self):
+        r = self.client.spawn('gid')
+        self._assertError(r, 'spawn')
 
 
 if __name__ == '__main__':

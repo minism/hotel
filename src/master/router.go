@@ -20,6 +20,7 @@ func CreateRouter(config *Config, store *SessionStore) *mux.Router {
 	authRouter.HandleFunc("/servers", HandleCreateGameServer).Methods("POST")
 	authRouter.HandleFunc("/servers/{id}", HandleUpdateGameServer).Methods("PUT")
 	authRouter.HandleFunc("/servers/{id}", HandleDeleteGameServer).Methods("DELETE")
+	authRouter.HandleFunc("/spawn", HandleSpawnGameServer).Methods("POST")
 
 	return router
 }

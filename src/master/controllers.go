@@ -77,6 +77,25 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
+func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
+	config := context.Get(r, ConfigContextKey).(*Config)
+	// session := context.Get(r, SessionContextKey).(Session)
+	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
+
+	// Check if game definition allows spawning.
+	def, ok := config.GetGameDefinition(gid)
+	if !ok {
+		http.Error(w, fmt.Sprintf("No definition for game ID '%v', and this master server doesn't allow undefined games.", gid), http.StatusBadRequest)
+		return
+	}
+	if def.HostPolicy != shared.HostPolicy_ANY && def.HostPolicy != shared.HostPolicy_SPAWN_ONLY {
+		http.Error(w, fmt.Sprintf("Game '%v' doesn't allow spawning.", gid), http.StatusBadRequest)
+		return
+	}
+
+	json.NewEncoder(w).Encode(nil)
+}
+
 func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
