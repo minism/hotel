@@ -65,7 +65,7 @@ func (config *Config) GetGameDefinition(gid shared.GameIDType) (shared.GameDefin
 func (config *Config) defaultGameDefinition() shared.GameDefinition {
 	return shared.GameDefinition{
 		GameID:     "_DEFAULT",
-		HostPolicy: shared.HostPolicy_CLIENTS_ONLY,
+		HostPolicy: shared.HostPolicy_ANY,
 	}
 }
 

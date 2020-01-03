@@ -30,6 +30,13 @@ func InitDb(dataPath string) {
 			max_players INTEGER,
 			last_modified INTEGER
 		);
+
+		CREATE TABLE IF NOT EXISTS spawners (
+			id INTEGER PRIMARY KEY, 
+			game_id VARCHAR(256),
+			host VARCHAR(256),
+			port INTEGER
+		);
 	`)
 	if err != nil {
 		log.Fatal(err)
@@ -139,11 +146,31 @@ func DeleteServersOlderThan(timestamp int64) error {
 	return nil
 }
 
+func DbInsertSpawner(spawner Spawner) error {
+	stmt, err := db.Prepare(`
+		INSERT INTO spawners (game_id, host, port)
+		VALUES (?, ?, ?)`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to insert spawner")
+	}
+	_, err = stmt.Exec(
+		spawner.GameID, spawner.Host, spawner.Port)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to insert spawner")
+	}
+	return nil
+}
+
+func DbGetSpawnersByGameId(gid shared.GameIDType) []Spawner {
+	return spawnerQuery("WHERE game_id = ?", gid)
+}
+
 func getModifiedTime() int64 {
 	return time.Now().Unix()
 }
 
-// TODO: Make private once package split happens
 func serverQuery(where string, args ...interface{}) []GameServer {
 	ret := make([]GameServer, 0)
 	q := "SELECT id, game_id, session_id, name, host, port, num_players, max_players FROM servers"
@@ -163,6 +190,30 @@ func serverQuery(where string, args ...interface{}) []GameServer {
 	var s GameServer
 	for rows.Next() {
 		rows.Scan(&s.ID, &s.GameID, &s.SessionID, &s.Name, &s.Host, &s.Port, &s.NumPlayers, &s.MaxPlayers)
+		ret = append(ret, s)
+	}
+	return ret
+}
+
+func spawnerQuery(where string, args ...interface{}) []Spawner {
+	ret := make([]Spawner, 0)
+	q := "SELECT game_id, host, port FROM spawners"
+	if len(where) > 0 {
+		q = q + " " + where
+	}
+	stmt, err := db.Prepare(q)
+	if err != nil {
+		log.Println(err)
+		return ret
+	}
+	rows, err := stmt.Query(args...)
+	if err != nil {
+		log.Println(err)
+		return ret
+	}
+	var s Spawner
+	for rows.Next() {
+		rows.Scan(&s.GameID, &s.Host, &s.Port)
 		ret = append(ret, s)
 	}
 	return ret

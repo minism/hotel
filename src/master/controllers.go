@@ -93,7 +93,13 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(nil)
+	server, err := SpawnServerForGame(gid)
+	if err != nil {
+		http.Error(w, "Failed to spawn server: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	json.NewEncoder(w).Encode(server)
 }
 
 func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
