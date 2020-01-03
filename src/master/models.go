@@ -23,15 +23,6 @@ type GameServer struct {
 	MaxPlayers int               `json:"maxPlayers"`
 }
 
-// A hotel spawner instance.
-type Spawner struct {
-	Host       string
-	Port       uint32
-	GameID     shared.GameIDType
-	NumServers int
-	MaxServers int
-}
-
 // Decode a JSON version of GameServer, validate it, and return it.
 // If any steps fail, returns an error.
 func DecodeAndValidateGameServer(reader io.Reader, isUpdate bool) (GameServer, error) {
@@ -75,4 +66,17 @@ func (s *GameServer) Merge(other GameServer) {
 	if other.MaxPlayers > 0 {
 		s.MaxPlayers = other.MaxPlayers
 	}
+}
+
+// A hotel spawner instance.
+type Spawner struct {
+	Host       string
+	Port       uint32
+	GameID     shared.GameIDType
+	NumServers int
+	MaxServers int
+}
+
+func (s *Spawner) Capacity() int {
+	return s.MaxServers - s.NumServers
 }
