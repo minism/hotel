@@ -1,11 +1,11 @@
-package master
+package rpc
 
 import (
 	"context"
 	"fmt"
 	"log"
 
-	"minornine.com/hotel/src/proto"
+	hotel_pb "minornine.com/hotel/src/proto"
 
 	"google.golang.org/grpc"
 )

@@ -1,4 +1,4 @@
-package spawner
+package rpc
 
 import (
 	"context"

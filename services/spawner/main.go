@@ -9,10 +9,10 @@ import (
 	"time"
 
 	hotel_pb "minornine.com/hotel/src/proto"
+	"minornine.com/hotel/src/spawner/rpc"
 
 	"google.golang.org/grpc"
 	"minornine.com/hotel/src/shared"
-	"minornine.com/hotel/src/spawner"
 )
 
 const (
@@ -42,7 +42,7 @@ func main() {
 		panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
 	}
 	grpcServer := grpc.NewServer()
-	hotel_pb.RegisterSpawnerServiceServer(grpcServer, &spawner.SpawnerService{})
+	hotel_pb.RegisterSpawnerServiceServer(grpcServer, &rpc.SpawnerService{})
 	log.Println("Running gRPC server on", addr)
 	go func() {
 		log.Fatal(grpcServer.Serve(listener))
@@ -51,7 +51,7 @@ func main() {
 	// Test request loop.
 	go func() {
 		for {
-			cl := spawner.NewMasterClient(masterServerAddress)
+			cl := rpc.NewMasterClient(masterServerAddress)
 			cl.Test()
 			time.Sleep(5 * time.Second)
 		}

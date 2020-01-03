@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"minornine.com/hotel/src/master/rpc"
 	"minornine.com/hotel/src/shared"
 )
 
@@ -18,7 +19,7 @@ const (
 )
 
 func HandleHealth(w http.ResponseWriter, r *http.Request) {
-	SendTestSpawnerRequest()
+	rpc.SendTestSpawnerRequest()
 	json.NewEncoder(w).Encode(ok)
 }
 

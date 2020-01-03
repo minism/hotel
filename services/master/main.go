@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"minornine.com/hotel/src/master"
+	"minornine.com/hotel/src/master/rpc"
 	hotel_pb "minornine.com/hotel/src/proto"
 	"minornine.com/hotel/src/shared"
 )
@@ -50,7 +51,7 @@ func main() {
 		panic(fmt.Sprintf("Error binding TCP socket to %v", rpcAddr))
 	}
 	grpcServer := grpc.NewServer()
-	hotel_pb.RegisterMasterServiceServer(grpcServer, &master.MasterService{})
+	hotel_pb.RegisterMasterServiceServer(grpcServer, &rpc.MasterService{})
 	log.Println("Running RPC server on", rpcAddr)
 	go func() {
 		log.Fatal(grpcServer.Serve(tcpListener))

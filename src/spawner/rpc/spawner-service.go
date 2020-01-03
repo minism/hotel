@@ -1,10 +1,10 @@
-package spawner
+package rpc
 
 import (
 	"context"
 	"log"
 
-	"minornine.com/hotel/src/proto"
+	hotel_pb "minornine.com/hotel/src/proto"
 )
 
 type SpawnerService struct{}
