@@ -6,7 +6,7 @@ import (
 	"net"
 	"strconv"
 
-	"minornine.com/hotel/src/proto"
+	hotel_pb "minornine.com/hotel/src/proto"
 
 	"google.golang.org/grpc"
 	"minornine.com/hotel/src/shared"
@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	DEFAULT_PORT = 3001
+	DEFAULT_PORT = 3002
 )
 
 var masterServerAddress = shared.GetEnv("HOTEL_MASTER_ADDRESS", "")
@@ -37,7 +37,7 @@ func main() {
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-    panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
+		panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
 	}
 
 	// Install all RPC handlers.
@@ -46,4 +46,8 @@ func main() {
 
 	log.Println("Running gRPC server on", addr)
 	grpcServer.Serve(listener)
+
+	// Send a test request.
+	c := spawner.NewMasterClient(masterServerAddress)
+	c.Test()
 }
