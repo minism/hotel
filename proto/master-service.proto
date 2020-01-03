@@ -24,6 +24,4 @@ message RegisterSpawnerRequest {
   string supportedGameId = 3;
 }
 
-message RegisterSpawnerResponse {
-  Status status = 1;
-}
+message RegisterSpawnerResponse {}

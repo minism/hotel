@@ -6,13 +6,3 @@ message GameServer {
     string host = 1;
     uint32 port = 2;
 }
-
-enum Status {
-    // Common status codes.
-    OK = 0;
-    UNKNOWN_ERROR = 1;
-    INVALID_REQUEST = 2;
-
-    // Semantic errors.
-    MAX_GAME_SERVERS_REACHED = 3;
-}

@@ -5,6 +5,9 @@ import (
 	"log"
 	"net"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	"google.golang.org/grpc/peer"
 	hotel_pb "minornine.com/hotel/src/proto"
 )
@@ -21,9 +24,7 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 		var err error
 		host, _, err = net.SplitHostPort(pr.Addr.String())
 		if err != nil {
-			return &hotel_pb.RegisterSpawnerResponse{
-				Status: hotel_pb.Status_INVALID_REQUEST,
-			}, nil
+			return nil, status.Error(codes.InvalidArgument, "No valid host found for request.")
 		}
 	}
 
@@ -34,7 +35,5 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 	}
 	RegisterSpawner(spawner)
 
-	return &hotel_pb.RegisterSpawnerResponse{
-		Status: hotel_pb.Status_OK,
-	}, nil
+	return &hotel_pb.RegisterSpawnerResponse{}, nil
 }

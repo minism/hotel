@@ -7,6 +7,7 @@ import (
 	hotel_pb "minornine.com/hotel/src/proto"
 
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/status"
 )
 
 type MasterClient struct {
@@ -36,10 +37,11 @@ func (c *MasterClient) Test() {
 	request := hotel_pb.RegisterSpawnerRequest{
 		Port: 12345,
 	}
-	response, err := client.RegisterSpawner(context.Background(), &request)
-	if err != nil {
-		log.Printf("Error making master RPC: %v", err)
+	_, err = client.RegisterSpawner(context.Background(), &request)
+	st := status.Convert(err)
+	if st.Err() != nil {
+		log.Printf("Error making master RPC: %v", st.Err())
 	} else {
-		log.Printf("Response from master service: %v", response.Status)
+		log.Printf("OK response from master service")
 	}
 }
