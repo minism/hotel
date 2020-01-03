@@ -27,5 +27,5 @@ message SpawnServerRequest {}
 
 message SpawnServerResponse {
   // Information about the newly created game server, if successful.
-  GameServer game_server = 1;
+  // GameServer game_server = 1;
 }

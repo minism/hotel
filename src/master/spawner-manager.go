@@ -9,11 +9,6 @@ var (
 	spawners []Spawner = make([]Spawner, 0)
 )
 
-type Spawner struct {
-	Host string
-	Port uint32
-}
-
 func RegisterSpawner(spawner Spawner) {
 	log.Printf("Registered new spawner at %v:%v", spawner.Host, spawner.Port)
 }

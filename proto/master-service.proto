@@ -18,10 +18,6 @@ message RegisterSpawnerRequest {
   // The port that this spawner should be accessed by.
   // Required.
   uint32 port = 2;
-
-  // The game ID that this spawner supports.
-  // TODO: This could eventually be a list of multiple supported IDs.
-  string supportedGameId = 3;
 }
 
 message RegisterSpawnerResponse {}

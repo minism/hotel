@@ -20,66 +20,84 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
-type GameServer struct {
-	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
-	Port                 uint32   `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
+type SpawnerStatus struct {
+	// The game ID that this spawner supports.
+	// TODO: This could eventually be a list of multiple supported IDs.
+	// Required.
+	SupportedGameId string `protobuf:"bytes,1,opt,name=supported_game_id,json=supportedGameId,proto3" json:"supported_game_id,omitempty"`
+	// The number of active servers managed by this spawner.
+	// Required.
+	NumServers int32 `protobuf:"varint,2,opt,name=num_servers,json=numServers,proto3" json:"num_servers,omitempty"`
+	// The maximum number of servers this spawner can support.
+	// Required.
+	MaxServers           int32    `protobuf:"varint,3,opt,name=max_servers,json=maxServers,proto3" json:"max_servers,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
 }
 
-func (m *GameServer) Reset()         { *m = GameServer{} }
-func (m *GameServer) String() string { return proto.CompactTextString(m) }
-func (*GameServer) ProtoMessage()    {}
-func (*GameServer) Descriptor() ([]byte, []int) {
+func (m *SpawnerStatus) Reset()         { *m = SpawnerStatus{} }
+func (m *SpawnerStatus) String() string { return proto.CompactTextString(m) }
+func (*SpawnerStatus) ProtoMessage()    {}
+func (*SpawnerStatus) Descriptor() ([]byte, []int) {
 	return fileDescriptor_1747d3070a2311a0, []int{0}
 }
 
-func (m *GameServer) XXX_Unmarshal(b []byte) error {
-	return xxx_messageInfo_GameServer.Unmarshal(m, b)
+func (m *SpawnerStatus) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_SpawnerStatus.Unmarshal(m, b)
 }
-func (m *GameServer) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	return xxx_messageInfo_GameServer.Marshal(b, m, deterministic)
+func (m *SpawnerStatus) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_SpawnerStatus.Marshal(b, m, deterministic)
 }
-func (m *GameServer) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_GameServer.Merge(m, src)
+func (m *SpawnerStatus) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SpawnerStatus.Merge(m, src)
 }
-func (m *GameServer) XXX_Size() int {
-	return xxx_messageInfo_GameServer.Size(m)
+func (m *SpawnerStatus) XXX_Size() int {
+	return xxx_messageInfo_SpawnerStatus.Size(m)
 }
-func (m *GameServer) XXX_DiscardUnknown() {
-	xxx_messageInfo_GameServer.DiscardUnknown(m)
+func (m *SpawnerStatus) XXX_DiscardUnknown() {
+	xxx_messageInfo_SpawnerStatus.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_GameServer proto.InternalMessageInfo
+var xxx_messageInfo_SpawnerStatus proto.InternalMessageInfo
 
-func (m *GameServer) GetHost() string {
+func (m *SpawnerStatus) GetSupportedGameId() string {
 	if m != nil {
-		return m.Host
+		return m.SupportedGameId
 	}
 	return ""
 }
 
-func (m *GameServer) GetPort() uint32 {
+func (m *SpawnerStatus) GetNumServers() int32 {
 	if m != nil {
-		return m.Port
+		return m.NumServers
+	}
+	return 0
+}
+
+func (m *SpawnerStatus) GetMaxServers() int32 {
+	if m != nil {
+		return m.MaxServers
 	}
 	return 0
 }
 
 func init() {
-	proto.RegisterType((*GameServer)(nil), "hotel_pb.GameServer")
+	proto.RegisterType((*SpawnerStatus)(nil), "hotel_pb.SpawnerStatus")
 }
 
 func init() { proto.RegisterFile("proto/common.proto", fileDescriptor_1747d3070a2311a0) }
 
 var fileDescriptor_1747d3070a2311a0 = []byte{
-	// 101 bytes of a gzipped FileDescriptorProto
+	// 154 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0x2a, 0x28, 0xca, 0x2f,
 	0xc9, 0xd7, 0x4f, 0xce, 0xcf, 0xcd, 0xcd, 0xcf, 0xd3, 0x03, 0x73, 0x84, 0x38, 0x32, 0xf2, 0x4b,
-	0x52, 0x73, 0xe2, 0x0b, 0x92, 0x94, 0x4c, 0xb8, 0xb8, 0xdc, 0x13, 0x73, 0x53, 0x83, 0x53, 0x8b,
-	0xca, 0x52, 0x8b, 0x84, 0x84, 0xb8, 0x58, 0x32, 0xf2, 0x8b, 0x4b, 0x24, 0x18, 0x15, 0x18, 0x35,
-	0x38, 0x83, 0xc0, 0x6c, 0x90, 0x58, 0x41, 0x7e, 0x51, 0x89, 0x04, 0x93, 0x02, 0xa3, 0x06, 0x6f,
-	0x10, 0x98, 0x9d, 0xc4, 0x06, 0x36, 0xc6, 0x18, 0x10, 0x00, 0x00, 0xff, 0xff, 0x04, 0xc8, 0xe7,
-	0xe6, 0x5c, 0x00, 0x00, 0x00,
+	0x52, 0x73, 0xe2, 0x0b, 0x92, 0x94, 0x6a, 0xb9, 0x78, 0x83, 0x0b, 0x12, 0xcb, 0xf3, 0x52, 0x8b,
+	0x82, 0x4b, 0x12, 0x4b, 0x4a, 0x8b, 0x85, 0xb4, 0xb8, 0x04, 0x8b, 0x4b, 0x0b, 0x0a, 0xf2, 0x8b,
+	0x4a, 0x52, 0x53, 0xe2, 0xd3, 0x13, 0x73, 0x53, 0xe3, 0x33, 0x53, 0x24, 0x18, 0x15, 0x18, 0x35,
+	0x38, 0x83, 0xf8, 0xe1, 0x12, 0xee, 0x89, 0xb9, 0xa9, 0x9e, 0x29, 0x42, 0xf2, 0x5c, 0xdc, 0x79,
+	0xa5, 0xb9, 0xf1, 0xc5, 0xa9, 0x45, 0x65, 0xa9, 0x45, 0xc5, 0x12, 0x4c, 0x0a, 0x8c, 0x1a, 0xac,
+	0x41, 0x5c, 0x79, 0xa5, 0xb9, 0xc1, 0x10, 0x11, 0x90, 0x82, 0xdc, 0xc4, 0x0a, 0xb8, 0x02, 0x66,
+	0x88, 0x82, 0xdc, 0xc4, 0x0a, 0xa8, 0x82, 0x24, 0x36, 0xb0, 0x7b, 0x8c, 0x01, 0x01, 0x00, 0x00,
+	0xff, 0xff, 0x14, 0x5d, 0x56, 0x8a, 0xa5, 0x00, 0x00, 0x00,
 }
