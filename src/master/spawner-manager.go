@@ -1,6 +1,7 @@
 package master
 
 import (
+	"log"
 	"time"
 )
 
@@ -14,7 +15,7 @@ type Spawner struct {
 }
 
 func RegisterSpawner(spawner Spawner) {
-
+	log.Printf("Registered new spawner at %v:%v", spawner.Host, spawner.Port)
 }
 
 func InitSpawnerManager(config *Config) {

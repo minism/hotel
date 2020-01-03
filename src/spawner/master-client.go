@@ -33,7 +33,9 @@ func (c *MasterClient) Test() {
 	defer conn.Close()
 
 	client := hotel_pb.NewMasterServiceClient(conn)
-	request := hotel_pb.RegisterSpawnerRequest{}
+	request := hotel_pb.RegisterSpawnerRequest{
+		Port: 12345,
+	}
 	response, err := client.RegisterSpawner(context.Background(), &request)
 	if err != nil {
 		log.Printf("Error making master RPC: %v", err)
