@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"strconv"
+	"time"
 
 	hotel_pb "minornine.com/hotel/src/proto"
 
@@ -33,21 +35,31 @@ func main() {
 	}
 	log.Printf("Spawner configured to handle %v max servers.", maxServers)
 
-	// Start a TCP server and connect gRPC to it.
+	// Start the RPC server in a goroutine.
 	addr := fmt.Sprintf(":%v", DEFAULT_PORT)
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		panic(fmt.Sprintf("Error binding TCP socket to %v", addr))
 	}
-
-	// Install all RPC handlers.
 	grpcServer := grpc.NewServer()
 	hotel_pb.RegisterSpawnerServiceServer(grpcServer, &spawner.SpawnerService{})
-
 	log.Println("Running gRPC server on", addr)
-	grpcServer.Serve(listener)
+	go func() {
+		log.Fatal(grpcServer.Serve(listener))
+	}()
 
-	// Send a test request.
-	c := spawner.NewMasterClient(masterServerAddress)
-	c.Test()
+	// Test request loop.
+	go func() {
+		for {
+			cl := spawner.NewMasterClient(masterServerAddress)
+			cl.Test()
+			time.Sleep(5 * time.Second)
+		}
+	}()
+
+	// Setup a SIGINT (CTRL+C) shutdown signal and block on it.
+	c := shared.CreateSigintChannel()
+	<-c
+	log.Println("Shutting down.")
+	os.Exit(0)
 }

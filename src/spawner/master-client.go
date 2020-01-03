@@ -36,5 +36,5 @@ func (c *MasterClient) Test() {
 	client := hotel_pb.NewMasterServiceClient(conn)
 	request := hotel_pb.RegisterSpawnerRequest{}
 	response, err := client.RegisterSpawner(context.Background(), &request)
-	fmt.Println(response)
+	fmt.Printf("Response from master service: %v", response.Status)
 }

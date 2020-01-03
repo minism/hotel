@@ -11,10 +11,9 @@ import (
 type MasterService struct{}
 
 func (s *MasterService) RegisterSpawner(ctx context.Context, req *hotel_pb.RegisterSpawnerRequest) (*hotel_pb.RegisterSpawnerResponse, error) {
-	log.Println("Received RPC from spawner")
 	pr, ok := peer.FromContext(ctx)
 	if ok {
-		log.Println(pr.Addr.String)
+		log.Printf("Received RPC from spawner: %v", pr.Addr)
 	}
 	return &hotel_pb.RegisterSpawnerResponse{
 		Status: hotel_pb.Status_OK,
