@@ -13,9 +13,6 @@ import (
 
 	"github.com/gorilla/handlers"
 	"minornine.com/hotel/src/master"
-	"minornine.com/hotel/src/master/models"
-	"minornine.com/hotel/src/master/rpc"
-	"minornine.com/hotel/src/master/spawner_manager"
 	hotel_pb "minornine.com/hotel/src/proto"
 	"minornine.com/hotel/src/shared"
 )
@@ -34,9 +31,9 @@ func main() {
 
 	// Initialize main components.
 	store := master.NewSessionStore()
-	config := models.LoadConfig(configPath)
+	config := master.LoadConfig(configPath)
 	master.InitDb(dataPath)
-	spawner_manager.InitSpawnerManager(&config)
+	master.InitSpawnerManager(&config)
 	master.StartReaper(&config, store)
 
 	// Start the HTTP server in a goroutine.
@@ -54,7 +51,7 @@ func main() {
 		panic(fmt.Sprintf("Error binding TCP socket to %v", rpcAddr))
 	}
 	grpcServer := grpc.NewServer()
-	hotel_pb.RegisterMasterServiceServer(grpcServer, &rpc.MasterService{})
+	hotel_pb.RegisterMasterServiceServer(grpcServer, &master.MasterService{})
 	log.Println("Running RPC server on", rpcAddr)
 	go func() {
 		log.Fatal(grpcServer.Serve(tcpListener))

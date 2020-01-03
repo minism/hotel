@@ -2,10 +2,9 @@ package master
 
 import (
 	"github.com/gorilla/mux"
-	"minornine.com/hotel/src/master/models"
 )
 
-func CreateRouter(config *models.Config, store *SessionStore) *mux.Router {
+func CreateRouter(config *Config, store *SessionStore) *mux.Router {
 	var router = mux.NewRouter()
 	router.Use(config.Middleware)
 

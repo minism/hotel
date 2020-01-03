@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
+	"minornine.com/hotel/src/shared"
 )
 
 const (
@@ -72,7 +73,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 		sessionToken = session.Token
 	} else {
 		var err error
-		sessionToken, err = GenerateRandomB32String(32)
+		sessionToken, err = shared.GenerateRandomB32String(32)
 		if err != nil {
 			log.Println("Error generating session ID: ", err)
 			http.Error(w, "Failed to identify.", http.StatusBadRequest)
@@ -88,8 +89,8 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 
 func (store *SessionStore) CreateSession(sessionToken string) {
 	session := Session{
-		ID:    nextSessionId,
-		Token: sessionToken,
+		ID:      nextSessionId,
+		Token:   sessionToken,
 		Servers: make(map[ServerIDType]bool),
 	}
 	nextSessionId++
