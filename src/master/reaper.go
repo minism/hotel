@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-func StartReaper(config Config, store *SessionStore) {
+func StartReaper(config *Config, store *SessionStore) {
 	go func() {
 		for {
 			reapSessions(config, store)
@@ -15,7 +15,7 @@ func StartReaper(config Config, store *SessionStore) {
 	}()
 }
 
-func reapSessions(config Config, store *SessionStore) {
+func reapSessions(config *Config, store *SessionStore) {
 	for token, session := range store.Sessions {
 		if time.Now().Sub(session.LastAccess) > config.SessionExpiration.Duration {
 			store.DeleteSession(token)
@@ -23,7 +23,7 @@ func reapSessions(config Config, store *SessionStore) {
 	}
 }
 
-func reapServers(config Config) {
+func reapServers(config *Config) {
 	oldestTime := time.Now().Add(-config.ServerExpiration.Duration)
 	err := DeleteServersOlderThan(oldestTime.Unix())
 	if err != nil {

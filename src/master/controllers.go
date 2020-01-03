@@ -2,6 +2,7 @@ package master
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -46,6 +47,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
+	config := context.Get(r, ConfigContextKey).(*Config)
 	session := context.Get(r, SessionContextKey).(Session)
 	server, err := DecodeAndValidateGameServer(r.Body, false)
 	fillImplicitGameServerFields(&server, r, session)
@@ -54,6 +56,19 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	// Check if game definition allows server creation.
+	def, ok := config.GetGameDefinition(server.GameID)
+	if !ok {
+		http.Error(w, fmt.Sprintf("No definition for game ID '%v', and this master server doesn't allow undefined games.", server.GameID), http.StatusBadRequest)
+		return
+	}
+	if def.HostPolicy != shared.HostPolicy_ANY && def.HostPolicy != shared.HostPolicy_CLIENTS_ONLY {
+		http.Error(w, fmt.Sprintf("Game '%v' doesn't allow client server creation.", server.GameID), http.StatusBadRequest)
+		return
+	}
+
+	// Db call.
 	server, err = DbInsertGameServer(server)
 	if err != nil {
 		http.Error(w, "Failed to create server: "+err.Error(), http.StatusInternalServerError)

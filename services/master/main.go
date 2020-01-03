@@ -33,11 +33,11 @@ func main() {
 	store := master.NewSessionStore()
 	config := master.LoadConfig(configPath)
 	master.InitDb(dataPath)
-	master.StartReaper(config, store)
+	master.StartReaper(&config, store)
 
 	// Start the HTTP server in a goroutine.
 	httpAddr := fmt.Sprintf(":%v", DEFAULT_HTTP_PORT)
-	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(store))
+	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(&config, store))
 	log.Println("Running HTTP server on", httpAddr)
 	go func() {
 		log.Fatal(http.ListenAndServe(httpAddr, mainRouter))

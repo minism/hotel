@@ -43,10 +43,13 @@ class IntegrationTest(unittest.TestCase):
     def _assertError(self, r, msg):
         self.assertEqual(400, r.status_code)
         self.assertRegexpMatches(r.text, msg)
+    
+    def _assertOk(self, r):
+        self.assertEqual(200, r.status_code, r.text)
 
     def testHealthCheck(self):
         r = requests.get(url('/health'))
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
     def test404(self):
         r = requests.get(url('/foo'))
@@ -87,7 +90,7 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         new_id_1 = r.json().get('id')
         self.assertTrue(new_id_1 is not None)
 
@@ -101,11 +104,11 @@ class IntegrationTest(unittest.TestCase):
         self.assertTrue(new_id_2 is not None)
 
         r = self.client.get(new_id_1)
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEquals('foo', r.json().get('name'))
 
         r = self.client.get(new_id_2)
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEquals('bar', r.json().get('name'))
     
     def testCreateAndList(self):
@@ -115,7 +118,7 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
         r = self.client.create({
             'name': 'bar',
@@ -123,7 +126,7 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
         r = self.client.create({
             'name': 'baz',
@@ -131,10 +134,10 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
         r = self.client.listServers('gid2')
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
         serverNames = [obj['name'] for obj in r.json().get('servers')]
         self.assertEqual({'foo', 'bar'}, set(serverNames))
@@ -146,19 +149,19 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         server_id = r.json().get('id')
 
         r = self.client.update(server_id, {
             'name': 'new name',
             'port': 1001,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
         
         r = self.client.get(server_id)
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
 
@@ -169,20 +172,20 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         server_id = r.json().get('id')
 
         r = self.client.update(server_id, {
             'port': 1001,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEqual('original', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
 
         r = self.client.update(server_id, {
             'name': 'new name',
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         self.assertEqual('new name', r.json().get('name'))
         self.assertEqual(1001, r.json().get('port'))
 
@@ -198,7 +201,7 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         server_id_1 = r.json().get('id')
 
         client2 = Client()
@@ -209,14 +212,14 @@ class IntegrationTest(unittest.TestCase):
             'host': 'www.google.com',
             'port': 1000,
         })
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         server_id_2 = r.json().get('id')
 
         # We should be able to get each others servers.
         r = self.client.get(server_id_2)
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
         r = client2.get(server_id_1)
-        self.assertEqual(200, r.status_code)
+        self._assertOk(r)
 
         # We should not be able to update each others servers.
         r = self.client.update(server_id_2, {
@@ -229,10 +232,6 @@ class IntegrationTest(unittest.TestCase):
             'port': 1000,
         })
         self.assertEqual(403, r.status_code)
-
-
-
-
 
 
 if __name__ == '__main__':

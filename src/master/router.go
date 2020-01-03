@@ -2,8 +2,9 @@ package master
 
 import "github.com/gorilla/mux"
 
-func CreateRouter(store *SessionStore) *mux.Router {
+func CreateRouter(config *Config, store *SessionStore) *mux.Router {
 	var router = mux.NewRouter()
+	router.Use(config.Middleware)
 
 	// Unauthenticated routes.
 	router.HandleFunc("/health", HandleHealth).Methods("GET")
