@@ -11,7 +11,17 @@ service MasterService {
 }
 
 message RegisterSpawnerRequest {
-  
+  // The hostname that the spawner should be accessed by.
+  // Optional, if this is set to the emptry string, the host is inferred automatically by the request.
+  string host = 1;
+
+  // The port that this spawner should be accessed by.
+  // Required.
+  uint32 port = 2;
+
+  // The game ID that this spawner supports.
+  // TODO: This could eventually be a list of multiple supported IDs.
+  string supportedGameId = 3;
 }
 
 message RegisterSpawnerResponse {

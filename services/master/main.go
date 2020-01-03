@@ -13,7 +13,9 @@ import (
 
 	"github.com/gorilla/handlers"
 	"minornine.com/hotel/src/master"
+	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/master/rpc"
+	"minornine.com/hotel/src/master/spawner_manager"
 	hotel_pb "minornine.com/hotel/src/proto"
 	"minornine.com/hotel/src/shared"
 )
@@ -32,8 +34,9 @@ func main() {
 
 	// Initialize main components.
 	store := master.NewSessionStore()
-	config := master.LoadConfig(configPath)
+	config := models.LoadConfig(configPath)
 	master.InitDb(dataPath)
+	spawner_manager.InitSpawnerManager(&config)
 	master.StartReaper(&config, store)
 
 	// Start the HTTP server in a goroutine.

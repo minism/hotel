@@ -10,6 +10,7 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/master/rpc"
 	"minornine.com/hotel/src/shared"
 )
@@ -48,7 +49,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
-	config := context.Get(r, ConfigContextKey).(*Config)
+	config := context.Get(r, models.ConfigContextKey).(*models.Config)
 	session := context.Get(r, SessionContextKey).(Session)
 	server, err := DecodeAndValidateGameServer(r.Body, false)
 	fillImplicitGameServerFields(&server, r, session)
