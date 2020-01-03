@@ -4,24 +4,23 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
-)
 
-// Unique ID for a game type, so hotel can multiplex across games.
-type GameIDType string
+	"minornine.com/hotel/src/shared"
+)
 
 // Unique ID for a game server instance.
 type ServerIDType int
 
 // A connectable game server instance.
 type GameServer struct {
-	ID         ServerIDType `json:"id"`
-	GameID     GameIDType   `json:"gameId"`
-	SessionID  int          `json:"-"`
-	Name       string       `json:"name"`
-	Host       string       `json:"host"`
-	Port       int          `json:"port"`
-	NumPlayers int          `json:"numPlayers"`
-	MaxPlayers int          `json:"maxPlayers"`
+	ID         ServerIDType      `json:"id"`
+	GameID     shared.GameIDType `json:"gameId"`
+	SessionID  int               `json:"-"`
+	Name       string            `json:"name"`
+	Host       string            `json:"host"`
+	Port       int               `json:"port"`
+	NumPlayers int               `json:"numPlayers"`
+	MaxPlayers int               `json:"maxPlayers"`
 }
 
 // Decode a JSON version of GameServer, validate it, and return it.

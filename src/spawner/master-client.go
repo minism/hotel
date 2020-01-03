@@ -2,7 +2,6 @@ package spawner
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	hotel_pb "minornine.com/hotel/src/proto"
@@ -36,5 +35,9 @@ func (c *MasterClient) Test() {
 	client := hotel_pb.NewMasterServiceClient(conn)
 	request := hotel_pb.RegisterSpawnerRequest{}
 	response, err := client.RegisterSpawner(context.Background(), &request)
-	fmt.Printf("Response from master service: %v", response.Status)
+	if err != nil {
+		log.Printf("Error making master RPC: %v", err)
+	} else {
+		log.Printf("Response from master service: %v", response.Status)
+	}
 }

@@ -1,14 +1,15 @@
 package master
 
 import (
-	"strings"
-	"log"
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"minornine.com/hotel/src/shared"
 )
 
 const (
@@ -21,7 +22,7 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleListGameServers(w http.ResponseWriter, r *http.Request) {
-	gid := GameIDType(r.URL.Query().Get("gameId"))
+	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
 	servers := DbGetGameServersByGameId(gid)
 	var response ListServersResponse
 	response.Servers = servers
@@ -116,7 +117,7 @@ func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
 
 	err = DbDeleteGameServerById(serverId)
 	if err != nil {
-		http.Error(w, "Failed to delete server: "+err.Error(), http.StatusInternalServerError);
+		http.Error(w, "Failed to delete server: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 

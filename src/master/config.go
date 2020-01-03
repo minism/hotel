@@ -5,12 +5,16 @@ import (
 	"io/ioutil"
 	"log"
 	"time"
+
+	"minornine.com/hotel/src/shared"
 )
 
 type Config struct {
-	ReaperInterval    SerializableDuration `json:"reaperInterval"`
-	SessionExpiration SerializableDuration `json:"sessionExpiration"`
-	ServerExpiration  SerializableDuration `json:"serverExpiration"`
+	ReaperInterval      SerializableDuration    `json:"reaperInterval"`
+	SessionExpiration   SerializableDuration    `json:"sessionExpiration"`
+	ServerExpiration    SerializableDuration    `json:"serverExpiration"`
+	AllowUndefinedGames bool                    `json:"allowUndefinedGames"`
+	GameDefs            []shared.GameDefinition `json:"gameDefs"`
 }
 
 type SerializableDuration struct {
@@ -18,7 +22,11 @@ type SerializableDuration struct {
 }
 
 func LoadConfig(configPath string) Config {
-	return loadFromPath(configPath)
+	c := loadFromPath(configPath)
+	for _, def := range c.GameDefs {
+		log.Printf("Supported game: %v", def.GameID)
+	}
+	return c
 }
 
 func (sd *SerializableDuration) UnmarshalJSON(data []byte) error {

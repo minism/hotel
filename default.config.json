@@ -1,5 +1,11 @@
 {
     "reaperInterval": "60s",
     "sessionExpiration": "10m",
-    "serverExpiration": "60s"
+    "serverExpiration": "60s",
+    "gameDefs": [
+        {
+            "gameId": "example",
+            "hostPolicy": "CLIENTS_ONLY"
+        }
+    ]
 }

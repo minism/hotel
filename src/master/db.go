@@ -8,6 +8,7 @@ import (
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+	"minornine.com/hotel/src/shared"
 )
 
 var db *sql.DB
@@ -41,7 +42,7 @@ func InitDb(dataPath string) {
 	}
 }
 
-func DbGetGameServersByGameId(gid GameIDType) []GameServer {
+func DbGetGameServersByGameId(gid shared.GameIDType) []GameServer {
 	return serverQuery("WHERE game_id = ?", gid)
 }
 
