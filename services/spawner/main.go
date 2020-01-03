@@ -51,7 +51,7 @@ func main() {
 	// Test request loop.
 	go func() {
 		for {
-			cl := rpc.NewMasterRpcClient(masterServerAddress)
+			cl := rpc.NewMasterClient(masterServerAddress)
 			cl.Test()
 			time.Sleep(5 * time.Second)
 		}
