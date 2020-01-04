@@ -1,0 +1,12 @@
+sequenceDiagram
+    GameServer ->> HotelMaster: POST /servers
+    HotelMaster ->> GameServer: ServerID
+    loop Alive ping (60s)
+        GameServer ->> HotelMaster: PUT /servers/id
+    end
+    GameClient ->> HotelMaster: GET /servers
+    HotelMaster ->> GameClient: Game Server Info
+    GameClient ->> GameServer: Initiate Direct Connection
+    loop Game Loop
+        GameServer --> GameClient: Game Packets (UDP)
+    end
