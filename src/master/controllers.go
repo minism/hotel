@@ -94,7 +94,7 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 
 	server, err := SpawnServerForGame(gid)
 	if err != nil {
-		http.Error(w, "Failed to spawn server: "+err.Error(), http.StatusBadRequest)
+		http.Error(w, "Failed to spawn server (internal error).", http.StatusInternalServerError)
 		return
 	}
 	json.NewEncoder(w).Encode(server)

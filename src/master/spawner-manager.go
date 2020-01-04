@@ -41,6 +41,7 @@ func SpawnServerForGame(gameId shared.GameIDType) (GameServer, error) {
 	// RPC to request a game server spawn.
 	response, err := SendSpawnServerRequest(&spawner)
 	if err != nil {
+		log.Printf("Error making spawn RPC: %v", err)
 		return ret, err
 	}
 
