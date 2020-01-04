@@ -38,13 +38,16 @@ FROM alpine
 WORKDIR /app
 
 # Copy the artifact from the first stage.
-COPY --from=builder /build/hotel-spawner  .
+COPY --from=builder /build/hotel-spawner .
 
-# The server runs on port 3001, so expose that.
-EXPOSE 3001
+# Copy the example config to the data directory.
+COPY services/spawner/example.config.json /data/config.json
+
+# The RPC server runs on port 3002, so expose that.
+EXPOSE 3002
 
 # Specify default environment variables.
-ENV HOTEL_SPAWNER_MAX_SERVERS 5
+ENV HOTEL_CONFIG_PATH /data/config.json
 
 # Run the executable.
 CMD ["./hotel-spawner"]
