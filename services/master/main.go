@@ -23,7 +23,7 @@ const (
 )
 
 var dataPath = shared.GetEnv("HOTEL_DATA_PATH", ".")
-var configPath = shared.GetEnv("HOTEL_CONFIG_PATH", "./default.config.json")
+var configPath = shared.GetEnv("HOTEL_CONFIG_PATH", "./services/master/example.config.json")
 
 func main() {
 	flag.Parse()

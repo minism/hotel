@@ -2,7 +2,6 @@ package master
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -70,27 +69,14 @@ func (config *Config) defaultGameDefinition() shared.GameDefinition {
 }
 
 func LoadConfig(configPath string) Config {
-	c := loadFromPath(configPath)
+	var config Config
+	shared.LoadConfigFromPath(configPath, &config)
 
 	// Fill in denormalized/private fields.
-	c.gameDefsById = make(map[shared.GameIDType]shared.GameDefinition)
-	for _, def := range c.GameDefs {
+	config.gameDefsById = make(map[shared.GameIDType]shared.GameDefinition)
+	for _, def := range config.GameDefs {
 		log.Printf("Supported game: %v", def.GameID)
-		c.gameDefsById[def.GameID] = def
+		config.gameDefsById[def.GameID] = def
 	}
-	return c
-}
-
-func loadFromPath(path string) Config {
-	data, err := ioutil.ReadFile(path)
-	if err != nil {
-		log.Panicln("Could not load config:", err)
-	}
-	var config Config
-	err = json.Unmarshal([]byte(data), &config)
-	if err != nil {
-		log.Panicln("Could not load config:", err)
-	}
-	log.Printf("Loaded config file %v\n", path)
 	return config
 }

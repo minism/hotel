@@ -40,8 +40,8 @@ WORKDIR /app
 # Copy the artifact from the first stage.
 COPY --from=builder /build/hotel-master  .
 
-# Copy the default config to the data directory.
-COPY default.config.json /data/config.json
+# Copy the example config to the data directory.
+COPY services/master/example.config.json /data/config.json
 
 # The server runs on port 3000, so expose that.
 EXPOSE 3000
