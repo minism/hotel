@@ -2,7 +2,6 @@ package master
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	hotel_pb "minornine.com/hotel/src/proto"
@@ -29,11 +28,10 @@ func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, er
 
 	client := hotel_pb.NewSpawnerServiceClient(conn)
 	response, err := client.SpawnServer(context.Background(), &hotel_pb.SpawnServerRequest{})
-	fmt.Println(response)
 	return response, err
 }
 
-func SendCheckStatusRequest(spawner *Spawner) error {
+func SendCheckStatusRequest(spawner *Spawner) (*hotel_pb.SpawnerStatus, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
 
@@ -41,11 +39,11 @@ func SendCheckStatusRequest(spawner *Spawner) error {
 
 	if err != nil {
 		log.Printf("Error connecting to RPC host %v: %v", spawner.Address(), err)
-		return err
+		return nil, err
 	}
 	defer conn.Close()
 
 	client := hotel_pb.NewSpawnerServiceClient(conn)
-	_, err = client.CheckStatus(context.Background(), &hotel_pb.CheckStatusRequest{})
-	return err
+	response, err := client.CheckStatus(context.Background(), &hotel_pb.CheckStatusRequest{})
+	return response.Status, err
 }

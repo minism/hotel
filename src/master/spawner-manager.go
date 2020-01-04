@@ -65,11 +65,12 @@ func InitSpawnerManager(config *Config) {
 	go func() {
 		for {
 			for _, spawner := range DbGetSpawners() {
-				err := SendCheckStatusRequest(&spawner)
-				// TODO: Update num servers in DB here.
+				status, err := SendCheckStatusRequest(&spawner)
 				if err != nil {
 					log.Printf("Error checking status of spawner at %v, removing from pool.", spawner.Address())
 					DbDeleteSpawnerById(spawner.ID)
+				} else {
+					DbUpdateSpawnerFromStatus(spawner.ID, status)
 				}
 			}
 			time.Sleep(config.SpawnerCheckInterval.Duration)

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
+	hotel_pb "minornine.com/hotel/src/proto"
+
 	_ "github.com/mattn/go-sqlite3"
 	"minornine.com/hotel/src/shared"
 )
@@ -161,6 +163,28 @@ func DbInsertSpawner(spawner Spawner) error {
 	if err != nil {
 		log.Println(err)
 		return errors.New("Failed to insert spawner")
+	}
+	return nil
+}
+
+func DbUpdateSpawnerFromStatus(id int, status *hotel_pb.SpawnerStatus) error {
+	stmt, err := db.Prepare(`
+		UPDATE spawners
+		SET game_id = ?,
+			num_game_servers = ?,
+			max_game_servers = ?
+		WHERE
+			id = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to update server.")
+	}
+	_, err = stmt.Exec(
+		status.SupportedGameId, status.NumGameServers, status.MaxGameServers, id)
+	if err != nil {
+		log.Println(err)
+		errors.New("Failed to update server.")
 	}
 	return nil
 }
