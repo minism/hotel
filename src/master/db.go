@@ -165,8 +165,29 @@ func DbInsertSpawner(spawner Spawner) error {
 	return nil
 }
 
+func DbGetSpawners() []Spawner {
+	return spawnerQuery("")
+}
+
 func DbGetSpawnersByGameId(gid shared.GameIDType) []Spawner {
 	return spawnerQuery("WHERE game_id = ?", gid)
+}
+
+func DbDeleteSpawnerById(id int) error {
+	stmt, err := db.Prepare(`
+		DELETE FROM spawners
+		WHERE id = ?
+	`)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete spawner.")
+	}
+	_, err = stmt.Exec(id)
+	if err != nil {
+		log.Println(err)
+		return errors.New("Failed to delete spawner.")
+	}
+	return nil
 }
 
 func getModifiedTime() int64 {
@@ -199,7 +220,7 @@ func serverQuery(where string, args ...interface{}) []GameServer {
 
 func spawnerQuery(where string, args ...interface{}) []Spawner {
 	ret := make([]Spawner, 0)
-	q := "SELECT game_id, host, port, num_game_servers, max_game_servers FROM spawners"
+	q := "SELECT id, game_id, host, port, num_game_servers, max_game_servers FROM spawners"
 	if len(where) > 0 {
 		q = q + " " + where
 	}
@@ -215,7 +236,7 @@ func spawnerQuery(where string, args ...interface{}) []Spawner {
 	}
 	var s Spawner
 	for rows.Next() {
-		rows.Scan(&s.GameID, &s.Host, &s.Port, &s.NumGameServers, &s.MaxGameServers)
+		rows.Scan(&s.ID, &s.GameID, &s.Host, &s.Port, &s.NumGameServers, &s.MaxGameServers)
 		ret = append(ret, s)
 	}
 	return ret

@@ -71,6 +71,7 @@ func (s *GameServer) Merge(other GameServer) {
 
 // A hotel spawner instance.
 type Spawner struct {
+	ID             int
 	Host           string
 	Port           uint32
 	GameID         shared.GameIDType
