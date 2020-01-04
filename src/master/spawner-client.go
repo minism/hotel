@@ -45,5 +45,8 @@ func SendCheckStatusRequest(spawner *Spawner) (*hotel_pb.SpawnerStatus, error) {
 
 	client := hotel_pb.NewSpawnerServiceClient(conn)
 	response, err := client.CheckStatus(context.Background(), &hotel_pb.CheckStatusRequest{})
-	return response.Status, err
+	if err != nil {
+		return nil, err
+	}
+	return response.Status, nil
 }

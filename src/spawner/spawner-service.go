@@ -38,6 +38,9 @@ func (s *SpawnerService) CheckStatus(context.Context, *hotel_pb.CheckStatusReque
 }
 
 func (s *SpawnerService) SpawnServer(context.Context, *hotel_pb.SpawnServerRequest) (*hotel_pb.SpawnServerResponse, error) {
+	if s.controller.Capacity() < 1 {
+		return nil, status.Error(codes.ResourceExhausted, "Spawner is already running its maximum server capacity.")
+	}
 	port, err := s.controller.SpawnServer()
 	if err != nil {
 		log.Printf("Error spawning server: %v", err)

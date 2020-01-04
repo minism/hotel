@@ -33,6 +33,10 @@ func (c *ServerController) NumRunningServers() int {
 	return len(c.servers)
 }
 
+func (c *ServerController) Capacity() int {
+	return c.availablePorts.Cardinality()
+}
+
 // Spawn a server process and return its port.
 func (c *ServerController) SpawnServer() (uint32, error) {
 	nextPort := c.availablePorts.Pop().(uint32)
