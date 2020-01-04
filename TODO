@@ -4,6 +4,9 @@
 - Add game server spawning (large task)
 - Add expected game ID types to configuration for extra security.
   - Spawning behavior could also be determined based on this config.
+- Errors should be defined at the same level, for ex strings should all be 
+  written in "controllers.go", and should not trust error messages from deeper 
+  layers. However, those messages could be logged?
 
 Authentication requirements/research:
     - Should be generally hard to LIST/CREATE/SPAWN

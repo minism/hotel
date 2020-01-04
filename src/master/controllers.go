@@ -92,7 +92,13 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	server, err := SpawnServerForGame(gid)
+	spawner, err := GetAvailableSpawnerForGame(gid)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	server, err := SpawnServerForGame(spawner, gid)
 	if err != nil {
 		http.Error(w, "Failed to spawn server (internal error).", http.StatusInternalServerError)
 		return

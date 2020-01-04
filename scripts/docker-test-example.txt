@@ -8,4 +8,4 @@ make docker-containers
 docker run -d --rm --name master --network hotel -p 3000:3000 hotel_master
 
 # Run the spawner, connecting via the docker network.
-docker run -d --rm --name spawner --network hotel -e HOTEL_MASTER_ADDRESS="master:3001" --rm --name spawner --network hotel hotel_spawner
+docker run -d --rm --name spawner --network hotel -e HOTEL_MASTER_ADDRESS="master:3001" hotel_spawner

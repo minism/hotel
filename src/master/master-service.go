@@ -29,6 +29,9 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 		if err != nil {
 			return nil, status.Error(codes.InvalidArgument, "No valid host found for request.")
 		}
+		if len(host) <= 3 {
+			host = "localhost"
+		}
 	}
 
 	// Register the spawner with the manager.

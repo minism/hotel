@@ -19,8 +19,8 @@ func RegisterSpawner(spawner Spawner) {
 	}
 }
 
-func SpawnServerForGame(gameId shared.GameIDType) (GameServer, error) {
-	var ret GameServer
+func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
+	var ret Spawner
 	spawners := DbGetSpawnersByGameId(gameId)
 	if len(spawners) < 1 {
 		return ret, errors.New(fmt.Sprintf("No spawners available for game ID '%v'", gameId))
@@ -33,10 +33,16 @@ func SpawnServerForGame(gameId shared.GameIDType) (GameServer, error) {
 	})
 
 	// Ensure there is at least some capacity.
-	spawner := spawners[0]
-	if spawner.Capacity() < 1 {
+	ret = spawners[0]
+	if ret.Capacity() < 1 {
 		return ret, errors.New(fmt.Sprintf("No capacity left for game ID '%v'", gameId))
 	}
+
+	return ret, nil
+}
+
+func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, error) {
+	var ret GameServer
 
 	// RPC to request a game server spawn.
 	response, err := SendSpawnServerRequest(&spawner)
