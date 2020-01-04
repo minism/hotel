@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-// import "proto/common.proto";
+import "proto/common.proto";
 
 package hotel_pb;
 
@@ -16,16 +16,15 @@ service SpawnerService {
 message CheckStatusRequest {}
 
 message CheckStatusResponse {
-  // The number of currently running game servers managed by the spawner.
-  uint32 running_game_servers = 1;
-
-  // The maximum number of game servers the spawner can handle.
-  uint32 max_game_servers = 2;
+  SpawnerStatus status = 1;
 }
 
 message SpawnServerRequest {}
 
 message SpawnServerResponse {
-  // Information about the newly created game server, if successful.
-  // GameServer game_server = 1;
+  // Host for the newly spawned game server.
+  string host = 1;
+
+  // Port for the newly spawned game server.
+  uint32 port = 2;
 }

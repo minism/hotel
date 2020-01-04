@@ -8,11 +8,11 @@ message SpawnerStatus {
   // Required.
   string supported_game_id = 1;
 
-  // The number of active servers managed by this spawner.
+  // The number of running servers managed by this spawner.
   // Required.
-  int32 num_servers = 2;
+  uint32 num_game_servers = 2;
 
   // The maximum number of servers this spawner can support.
   // Required.
-  int32 max_servers = 3;
+  uint32 max_game_servers = 3;
 }

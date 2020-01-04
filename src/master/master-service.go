@@ -5,6 +5,8 @@ import (
 	"log"
 	"net"
 
+	"minornine.com/hotel/src/shared"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
@@ -30,8 +32,11 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 
 	// Register the spawner with the manager.
 	spawner := Spawner{
-		Host: host,
-		Port: request.Port,
+		Host:       host,
+		Port:       request.Port,
+		GameID:     shared.GameIDType(request.Status.SupportedGameId),
+		NumServers: request.Status.NumGameServers,
+		MaxServers: request.Status.MaxGameServers,
 	}
 	RegisterSpawner(spawner)
 

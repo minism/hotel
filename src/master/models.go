@@ -3,6 +3,7 @@ package master
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 
 	"minornine.com/hotel/src/shared"
@@ -73,10 +74,14 @@ type Spawner struct {
 	Host       string
 	Port       uint32
 	GameID     shared.GameIDType
-	NumServers int
-	MaxServers int
+	NumServers uint32
+	MaxServers uint32
 }
 
-func (s *Spawner) Capacity() int {
+func (s *Spawner) Capacity() uint32 {
 	return s.MaxServers - s.NumServers
+}
+
+func (s *Spawner) Address() string {
+	return fmt.Sprintf("%v:%v", s.Host, s.Port)
 }
