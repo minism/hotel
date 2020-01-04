@@ -35,7 +35,9 @@ func InitDb(dataPath string) {
 			id INTEGER PRIMARY KEY, 
 			game_id VARCHAR(256),
 			host VARCHAR(256),
-			port INTEGER
+			port INTEGER,
+			num_game_servers INTEGER,
+			max_game_servers INTEGER
 		);
 	`)
 	if err != nil {
@@ -148,14 +150,14 @@ func DeleteServersOlderThan(timestamp int64) error {
 
 func DbInsertSpawner(spawner Spawner) error {
 	stmt, err := db.Prepare(`
-		INSERT INTO spawners (game_id, host, port)
-		VALUES (?, ?, ?)`)
+		INSERT INTO spawners (game_id, host, port, num_game_servers, max_game_servers)
+		VALUES (?, ?, ?, ?, ?)`)
 	if err != nil {
 		log.Println(err)
 		return errors.New("Failed to insert spawner")
 	}
 	_, err = stmt.Exec(
-		spawner.GameID, spawner.Host, spawner.Port)
+		spawner.GameID, spawner.Host, spawner.Port, spawner.NumGameServers, spawner.MaxGameServers)
 	if err != nil {
 		log.Println(err)
 		return errors.New("Failed to insert spawner")
@@ -197,7 +199,7 @@ func serverQuery(where string, args ...interface{}) []GameServer {
 
 func spawnerQuery(where string, args ...interface{}) []Spawner {
 	ret := make([]Spawner, 0)
-	q := "SELECT game_id, host, port FROM spawners"
+	q := "SELECT game_id, host, port, num_game_servers, max_game_servers FROM spawners"
 	if len(where) > 0 {
 		q = q + " " + where
 	}
@@ -213,7 +215,7 @@ func spawnerQuery(where string, args ...interface{}) []Spawner {
 	}
 	var s Spawner
 	for rows.Next() {
-		rows.Scan(&s.GameID, &s.Host, &s.Port)
+		rows.Scan(&s.GameID, &s.Host, &s.Port, &s.NumGameServers, &s.MaxGameServers)
 		ret = append(ret, s)
 	}
 	return ret

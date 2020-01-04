@@ -19,7 +19,8 @@ type MasterService struct{}
 func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.RegisterSpawnerRequest) (*hotel_pb.RegisterSpawnerResponse, error) {
 	pr, ok := peer.FromContext(ctx)
 	if ok {
-		log.Printf("Received RPC from spawner: %v", pr.Addr)
+		log.Printf("Received RPC from spawner: %v.\n  GameID: %v\n  Max servers: %v", pr.Addr, request.Status.SupportedGameId, request.Status.MaxGameServers)
+		log.Printf("")
 	}
 	host := request.Host
 	if host == "" {
@@ -32,11 +33,11 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 
 	// Register the spawner with the manager.
 	spawner := Spawner{
-		Host:       host,
-		Port:       request.Port,
-		GameID:     shared.GameIDType(request.Status.SupportedGameId),
-		NumServers: request.Status.NumGameServers,
-		MaxServers: request.Status.MaxGameServers,
+		Host:           host,
+		Port:           request.Port,
+		GameID:         shared.GameIDType(request.Status.SupportedGameId),
+		NumGameServers: request.Status.NumGameServers,
+		MaxGameServers: request.Status.MaxGameServers,
 	}
 	RegisterSpawner(spawner)
 

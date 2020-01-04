@@ -71,15 +71,15 @@ func (s *GameServer) Merge(other GameServer) {
 
 // A hotel spawner instance.
 type Spawner struct {
-	Host       string
-	Port       uint32
-	GameID     shared.GameIDType
-	NumServers uint32
-	MaxServers uint32
+	Host           string
+	Port           uint32
+	GameID         shared.GameIDType
+	NumGameServers uint32
+	MaxGameServers uint32
 }
 
 func (s *Spawner) Capacity() uint32 {
-	return s.MaxServers - s.NumServers
+	return s.MaxGameServers - s.NumGameServers
 }
 
 func (s *Spawner) Address() string {
