@@ -1,10 +1,8 @@
 package master
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gorilla/context"
 	"minornine.com/hotel/src/shared"
@@ -15,31 +13,14 @@ const (
 )
 
 type Config struct {
-	ReaperInterval       SerializableDuration    `json:"reaperInterval"`
-	SessionExpiration    SerializableDuration    `json:"sessionExpiration"`
-	ServerExpiration     SerializableDuration    `json:"serverExpiration"`
-	SpawnerCheckInterval SerializableDuration    `json:"spawnerCheckInterval"`
-	GameDefs             []shared.GameDefinition `json:"gameDefs"`
-	AllowUndefinedGames  bool                    `json:"allowUndefinedGames"`
+	ReaperInterval       shared.SerializableDuration `json:"reaperInterval"`
+	SessionExpiration    shared.SerializableDuration `json:"sessionExpiration"`
+	ServerExpiration     shared.SerializableDuration `json:"serverExpiration"`
+	SpawnerCheckInterval shared.SerializableDuration `json:"spawnerCheckInterval"`
+	GameDefs             []shared.GameDefinition     `json:"gameDefs"`
+	AllowUndefinedGames  bool                        `json:"allowUndefinedGames"`
 
 	gameDefsById map[shared.GameIDType]shared.GameDefinition
-}
-
-type SerializableDuration struct {
-	time.Duration
-}
-
-func (sd *SerializableDuration) UnmarshalJSON(data []byte) error {
-	var str string
-	if err := json.Unmarshal(data, &str); err != nil {
-		return err
-	}
-	duration, err := time.ParseDuration(str)
-	if err != nil {
-		return err
-	}
-	sd.Duration = duration
-	return nil
 }
 
 func (config *Config) Middleware(next http.Handler) http.Handler {
