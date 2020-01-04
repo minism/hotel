@@ -1,11 +1,16 @@
 sequenceDiagram
+    UnityClient ->> HotelMaster: POST /spawn
+    Activate HotelMaster
+    HotelMaster ->> HotelSpawner: RPC SpawnServerRequest
+    HotelSpawner ->> UnityServer: Start Unity Process
+    HotelSpawner ->> HotelMaster: RPC SpawnServerResponse
+    HotelMaster ->> UnityClient: Unity Server IP:Port
+    Deactivate HotelMaster
     UnityServer ->> HotelMaster: POST /servers
     HotelMaster ->> UnityServer: ServerID
     loop Alive ping (60s)
         UnityServer ->> HotelMaster: PUT /servers/id
     end
-    UnityClient ->> HotelMaster: GET /servers
-    HotelMaster ->> UnityClient: Game Server Info
     UnityClient ->> UnityServer: Initiate Direct Connection
     loop Game Loop
         UnityServer --> UnityClient: Game Packets (UDP)
