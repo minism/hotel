@@ -97,11 +97,6 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to spawn server: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-
-	// We return a partially filled GameServer struct, which at a minimum will have host:port
-	// for the client to connect to, because the spawner will know about this.
-	// We don't have the full struct including ID because it wont be generated until the
-	// game server itself starts up and communicates with the master server.
 	json.NewEncoder(w).Encode(server)
 }
 

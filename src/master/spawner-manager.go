@@ -38,8 +38,18 @@ func SpawnServerForGame(gameId shared.GameIDType) (GameServer, error) {
 		return ret, errors.New(fmt.Sprintf("No capacity left for game ID '%v'", gameId))
 	}
 
-	// RPC to request a spawn.
+	// RPC to request a game server spawn.
+	response, err := SendSpawnServerRequest(&spawner)
+	if err != nil {
+		return ret, err
+	}
 
+	// We return a partially filled GameServer struct, which at a minimum will have host:port
+	// for the client to connect to, because the spawner will know about this.
+	// We don't have the full struct including ID because it wont be generated until the
+	// game server itself starts up and communicates with the master server.
+	ret.Host = response.Host
+	ret.Port = int(response.Port)
 	return ret, nil
 }
 

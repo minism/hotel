@@ -15,7 +15,7 @@ const (
 	SPAWNER_ADDRESS = "spawner:3001"
 )
 
-func SendSpawnServerRequest(spawner *Spawner) error {
+func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
 
@@ -23,15 +23,14 @@ func SendSpawnServerRequest(spawner *Spawner) error {
 
 	if err != nil {
 		log.Printf("Error connecting to RPC host %v: %v", spawner.Address(), err)
-		return err
+		return nil, err
 	}
 	defer conn.Close()
 
 	client := hotel_pb.NewSpawnerServiceClient(conn)
-	// response, err := client.CheckStatus(context.Background(), &hotel_pb.CheckStatusRequest{})
 	response, err := client.SpawnServer(context.Background(), &hotel_pb.SpawnServerRequest{})
 	fmt.Println(response)
-	return err
+	return response, err
 }
 
 func SendCheckStatusRequest(spawner *Spawner) error {
