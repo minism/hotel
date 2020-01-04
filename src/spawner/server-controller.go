@@ -22,11 +22,20 @@ func NewServerController(config *Config) *ServerController {
 		ports.Add(config.Port + i + 1)
 	}
 
-	return &ServerController{
+	controller := &ServerController{
 		config:         config,
 		servers:        make([]ServerProcess, 0),
 		availablePorts: ports,
 	}
+
+	// If we're configured to autorun, do that now.
+	if config.Autorun {
+		for i := uint32(0); i < config.MaxGameServers; i++ {
+			controller.SpawnServer()
+		}
+	}
+
+	return controller
 }
 
 func (c *ServerController) NumRunningServers() int {
