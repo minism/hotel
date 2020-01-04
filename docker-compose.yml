@@ -16,3 +16,7 @@ services:
     deploy:
       restart_policy:
         condition: on-failure
+    depends_on:
+      - master
+    environment:
+      - "HOTEL_MASTER_ADDRESS=master:3001"
