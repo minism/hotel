@@ -1,18 +1,15 @@
 package spawner
 
-import mapset "github.com/deckarep/golang-set"
+import (
+	"log"
+
+	mapset "github.com/deckarep/golang-set"
+)
 
 // ServerController manages the lifecycle of game server processes.
 type ServerController struct {
 	config         *Config
-	servers        []ServerProcess
 	availablePorts mapset.Set
-}
-
-// RunningServer represents an actively running game server process.
-type ServerProcess struct {
-	Port uint32
-	Pid  int
 }
 
 func NewServerController(config *Config) *ServerController {
@@ -24,7 +21,6 @@ func NewServerController(config *Config) *ServerController {
 
 	controller := &ServerController{
 		config:         config,
-		servers:        make([]ServerProcess, 0),
 		availablePorts: ports,
 	}
 
@@ -38,23 +34,32 @@ func NewServerController(config *Config) *ServerController {
 	return controller
 }
 
-func (c *ServerController) NumRunningServers() int {
-	return len(c.servers)
-}
-
 func (c *ServerController) Capacity() int {
 	return c.availablePorts.Cardinality()
 }
 
+func (c *ServerController) NumRunningServers() int {
+	return int(c.config.MaxGameServers) - c.Capacity()
+}
+
 // Spawn a server process and return its port.
 func (c *ServerController) SpawnServer() (uint32, error) {
-	nextPort := c.availablePorts.Pop().(uint32)
-	pid, err := LaunchGameServer(c.config, nextPort)
+	port := c.availablePorts.Pop().(uint32)
+	process, err := LaunchGameServer(c.config, port)
 	if err != nil {
-		c.availablePorts.Add(nextPort)
-		return nextPort, err
+		c.availablePorts.Add(port)
+		return port, err
 	} else {
-		c.servers = append(c.servers, ServerProcess{Port: nextPort, Pid: pid})
+		go func() {
+			// Make the port available when the server has terminated.
+			state, err := process.Wait()
+			if err != nil {
+				log.Printf("Game server terminated with error: %v", err)
+			}
+			log.Printf("Game server pid %v terminated, returning port %v to pool.", process.Pid, port)
+			log.Printf(state.String())
+			c.availablePorts.Add(port)
+		}()
 	}
-	return nextPort, nil
+	return port, nil
 }
