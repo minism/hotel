@@ -20,7 +20,7 @@ func NewMasterClient(addr string) MasterClient {
 	}
 }
 
-func (c *MasterClient) Test() {
+func (c *MasterClient) Register(port uint32, spawnerStatus hotel_pb.SpawnerStatus) error {
 	// TODO: Credentials.
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
@@ -29,19 +29,22 @@ func (c *MasterClient) Test() {
 	conn, err := grpc.Dial(c.Addr, opts...)
 	if err != nil {
 		log.Printf("Error connecting to RPC host %v: %v", c.Addr, err)
-		return
+		return err
 	}
 	defer conn.Close()
 
 	client := hotel_pb.NewMasterServiceClient(conn)
 	request := hotel_pb.RegisterSpawnerRequest{
-		Port: 12345,
+		Port:   port,
+		Status: &spawnerStatus,
 	}
 	_, err = client.RegisterSpawner(context.Background(), &request)
 	st := status.Convert(err)
 	if st.Err() != nil {
 		log.Printf("Error making master RPC: %v", st.Err())
+		return err
 	} else {
 		log.Printf("OK response from master service")
+		return nil
 	}
 }
