@@ -4,25 +4,29 @@ import (
 	"context"
 	"log"
 
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
 	hotel_pb "minornine.com/hotel/src/proto"
 )
 
 type SpawnerService struct {
-	config *Config
+	config     *Config
+	controller *ServerController
 }
 
-func NewSpawnerService(config *Config) SpawnerService {
+func NewSpawnerService(config *Config, controller *ServerController) SpawnerService {
 	return SpawnerService{
-		config: config,
+		config:     config,
+		controller: controller,
 	}
 }
 
 func (s *SpawnerService) GetStatus() hotel_pb.SpawnerStatus {
 	return hotel_pb.SpawnerStatus{
 		SupportedGameId: string(s.config.SupportedGameID),
-		// TODO: Implement num game servers.
-		NumGameServers: 0,
-		MaxGameServers: s.config.MaxGameServers,
+		NumGameServers:  uint32(s.controller.NumRunningServers()),
+		MaxGameServers:  s.config.MaxGameServers,
 	}
 }
 
@@ -34,6 +38,12 @@ func (s *SpawnerService) CheckStatus(context.Context, *hotel_pb.CheckStatusReque
 }
 
 func (s *SpawnerService) SpawnServer(context.Context, *hotel_pb.SpawnServerRequest) (*hotel_pb.SpawnServerResponse, error) {
-	log.Println("Received RPC")
-	return &hotel_pb.SpawnServerResponse{}, nil
+	port, err := s.controller.SpawnServer()
+	if err != nil {
+		log.Printf("Error spawning server: %v", err)
+		return nil, status.Error(codes.Internal, "Error spawning server.")
+	}
+	return &hotel_pb.SpawnServerResponse{
+		Port: port,
+	}, nil
 }

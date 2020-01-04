@@ -39,7 +39,9 @@ func main() {
 
 	// Initialize main components.
 	config := spawner.LoadConfig(configPath)
-	service := spawner.NewSpawnerService(&config)
+	config.Port = DEFAULT_PORT
+	controller := spawner.NewServerController(&config)
+	service := spawner.NewSpawnerService(&config, controller)
 
 	// Start the RPC server in a goroutine.
 	port := DEFAULT_PORT

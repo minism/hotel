@@ -1,5 +1,6 @@
 {
     "supportedGameId": "gid1",
     "maxGameServers": 3,
-    "gameServerPath": "ls"
+    "gameServerPath": "/bin/bash",
+    "autorun": false
 }

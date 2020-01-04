@@ -127,8 +127,10 @@ var xxx_messageInfo_SpawnServerRequest proto.InternalMessageInfo
 
 type SpawnServerResponse struct {
 	// Host for the newly spawned game server.
+	// Optional. If empty, the client should assume the host is equivalent to the spawner service itself.
 	Host string `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
 	// Port for the newly spawned game server.
+	// Required.
 	Port                 uint32   `protobuf:"varint,2,opt,name=port,proto3" json:"port,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`

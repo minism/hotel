@@ -23,8 +23,10 @@ message SpawnServerRequest {}
 
 message SpawnServerResponse {
   // Host for the newly spawned game server.
+  // Optional. If empty, the client should assume the host is equivalent to the spawner service itself.
   string host = 1;
 
   // Port for the newly spawned game server.
+  // Required.
   uint32 port = 2;
 }
