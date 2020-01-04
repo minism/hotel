@@ -56,7 +56,11 @@ func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, 
 	// We don't have the full struct including ID because it wont be generated until the
 	// game server itself starts up and communicates with the master server.
 	ret.Host = response.Host
+	if ret.Host == "" {
+		ret.Host = spawner.Host
+	}
 	ret.Port = int(response.Port)
+	ret.GameID = spawner.GameID
 	return ret, nil
 }
 
