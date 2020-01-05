@@ -32,7 +32,7 @@ func LaunchGameServer(config *Config, port uint32) (*os.Process, error) {
 
 func gameServerFlags(config *Config, port uint32) []string {
 	ret := []string{
-		fmt.Sprintf("--port=%v", port),
+		fmt.Sprintf("--port %v", port),
 	}
 	return ret
 }
