@@ -5,7 +5,6 @@ import (
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"time"
 
 	hotel_pb "minornine.com/hotel/src/proto"
@@ -21,21 +20,16 @@ const (
 )
 
 var masterServerAddress = shared.GetEnv("HOTEL_MASTER_ADDRESS", "")
-var maxServersVar = shared.GetEnv("HOTEL_SPAWNER_MAX_SERVERS", "5")
+var dataPath = shared.GetEnv("HOTEL_DATA_PATH", ".")
 var configPath = shared.GetEnv("HOTEL_CONFIG_PATH", "./services/spawner/example.config.json")
 
 func main() {
 	shared.InitLogging()
 
 	// Validate environment variables.
-	maxServers, err := strconv.ParseUint(maxServersVar, 10, 64)
-	if err != nil {
-		panic(fmt.Sprintf("Unable to parse HOTEL_SPAWNER_MAX_SERVERS: %v", maxServersVar))
-	}
 	if masterServerAddress == "" {
 		panic("Must provide HOTEL_MASTER_ADDRESS environment variable.")
 	}
-	log.Printf("Spawner configured to handle %v max servers.", maxServers)
 
 	// Initialize main components.
 	config := spawner.LoadConfig(configPath)
