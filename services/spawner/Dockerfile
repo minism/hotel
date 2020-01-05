@@ -46,9 +46,6 @@ COPY services/spawner/example.config.json /data/config.json
 # The RPC server runs on port 3002, so expose that.
 EXPOSE 3002
 
-# Setup a volume.
-VOLUME /data
-
 # Specify default environment variables.
 ENV HOTEL_DATA_PATH /data
 ENV HOTEL_CONFIG_PATH /data/config.json
