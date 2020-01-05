@@ -53,3 +53,7 @@ Game server hosting models which hotel can support:
     - Client initiated: Client-server
         - Clients create game servers by requesting that one be spawned for them server side. The request
           is sent through the master server which RPCs to the spawner to spin up a new instance.
+
+
+Docker stuff:
+  - Go object cache for faster builds: https://medium.com/windmill-engineering/tips-tricks-for-making-your-golang-container-builds-10x-faster-4cc618a43827

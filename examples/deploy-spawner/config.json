@@ -1,0 +1,6 @@
+{
+    "supportedGameId": "example-game-id",
+    "maxGameServers": 5,
+    "gameServerPath": "/data/game-server.py",
+    "autorun": true
+}

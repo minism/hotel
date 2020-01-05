@@ -1,0 +1,17 @@
+# This is an example of how to run an instance of the hotel spawner stack
+# for a particular game server without modifying any of the upstream source.
+version: "3"
+services:
+  spawner:
+    build: .
+    deploy:
+      restart_policy:
+        condition: on-failure
+    environment:
+      - "HOTEL_MASTER_ADDRESS=master1:3001"
+    networks:
+      - frontend
+networks:
+  frontend:
+    external:
+      name: hotel
