@@ -51,6 +51,9 @@ func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, 
 		return ret, err
 	}
 
+	// Update the spawner status in the DB immediately.
+	DbUpdateSpawnerFromStatus(spawner.ID, response.Status)
+
 	// We return a partially filled GameServer struct, which at a minimum will have host:port
 	// for the client to connect to, because the spawner will know about this.
 	// We don't have the full struct including ID because it wont be generated until the

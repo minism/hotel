@@ -29,4 +29,8 @@ message SpawnServerResponse {
   // Port for the newly spawned game server.
   // Required.
   uint32 port = 2;
+
+  // The new status for the spawner which contains updated capacity.
+  // Required.
+  SpawnerStatus status = 3;
 }

@@ -46,7 +46,9 @@ func (s *SpawnerService) SpawnServer(context.Context, *hotel_pb.SpawnServerReque
 		log.Printf("Error spawning server: %v", err)
 		return nil, status.Error(codes.Internal, "Error spawning server.")
 	}
+	status := s.GetStatus()
 	return &hotel_pb.SpawnServerResponse{
-		Port: port,
+		Port:   port,
+		Status: &status,
 	}, nil
 }
