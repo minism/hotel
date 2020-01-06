@@ -2,5 +2,6 @@
     "supportedGameId": "gid1",
     "maxGameServers": 3,
     "gameServerPath": "./services/spawner/dummy-server.py",
+    "gameServerFlags": [],
     "autorun": false
 }

@@ -7,6 +7,8 @@
 - Errors should be defined at the same level, for ex strings should all be 
   written in "controllers.go", and should not trust error messages from deeper 
   layers. However, those messages could be logged?
+- Sessions should be stateful so the master server can be restarted
+  and clients dont get 403s
 
 Authentication requirements/research:
     - Should be generally hard to LIST/CREATE/SPAWN

@@ -67,6 +67,9 @@ func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, 
 func InitSpawnerManager(config *Config) {
 	// Start a routine which updates the status of spawners.
 	go func() {
+		// TODO: Make this a count query instead.
+		var spawners = DbGetSpawners()
+		log.Printf("Discovered %v existing spawners in database.", len(spawners))
 		for {
 			for _, spawner := range DbGetSpawners() {
 				status, err := SendCheckStatusRequest(&spawner)

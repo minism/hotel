@@ -12,6 +12,7 @@ type Config struct {
 	SupportedGameID shared.GameIDType `json:"supportedGameId"`
 	MaxGameServers  uint32            `json:"maxGameServers"`
 	GameServerPath  string            `json:"gameServerPath"`
+	GameServerFlags []string          `json:"gameServerFlags"`
 
 	// Whether the spawner should start game servers immediately, versus
 	// waiting for clients to request spawns.
