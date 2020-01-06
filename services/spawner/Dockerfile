@@ -25,14 +25,14 @@ COPY . .
 RUN go get -d -v ./...
 
 # Build the artifact.
-RUN go build -o /build/hotel-spawner services/spawner/main.go
+RUN CGO_ENABLED=0 go build -o /build/hotel-spawner services/spawner/main.go
 
 #####################################################################
 # The second stage produces the runtime image which is the minimal
 # environment needed to execute the binary artifact.
 # Note that its important the "build" and "runtime" linux environments
 # are both alpine here, so we don't need to think about cross-compiling.
-FROM alpine
+FROM ubuntu:latest
 
 # Set the Current Working Directory inside the container.
 WORKDIR /app
