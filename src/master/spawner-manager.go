@@ -29,7 +29,7 @@ func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
 	// Implement basic load balancing by sorting spawners by capacity.
 	// TODO: Should sort by done in SQL?
 	sort.Slice(spawners, func(i, j int) bool {
-		return (spawners[i].Capacity() < spawners[j].Capacity())
+		return (spawners[i].Capacity() > spawners[j].Capacity())
 	})
 
 	// Ensure there is at least some capacity.
