@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
+	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
 )
 
@@ -24,14 +25,14 @@ type Session struct {
 	Token string
 
 	// Servers owned by this session.
-	Servers map[ServerIDType]bool
+	Servers map[models.ServerIDType]bool
 
 	// The last access time for the session.
 	LastAccess time.Time
 }
 
 // OwnsServerId returns whether the given server ID is owned by this session.
-func (session *Session) OwnsServerId(id ServerIDType) bool {
+func (session *Session) OwnsServerId(id models.ServerIDType) bool {
 	if ok, exists := session.Servers[id]; exists {
 		return ok
 	}
@@ -90,7 +91,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 		store.CreateSession(sessionToken)
 	}
 
-	var response IdentifyResponse
+	var response models.IdentifyResponse
 	response.Token = sessionToken
 	json.NewEncoder(w).Encode(response)
 }
@@ -100,7 +101,7 @@ func (store *SessionStore) CreateSession(sessionToken string) {
 	session := Session{
 		ID:      nextSessionId,
 		Token:   sessionToken,
-		Servers: make(map[ServerIDType]bool),
+		Servers: make(map[models.ServerIDType]bool),
 	}
 	nextSessionId++
 	store.Sessions[sessionToken] = session

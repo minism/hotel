@@ -1,4 +1,4 @@
-package master
+package models
 
 // IdentifyResponse is returned from the identify API call.
 type IdentifyResponse struct {

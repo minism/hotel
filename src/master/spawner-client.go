@@ -4,13 +4,14 @@ import (
 	"context"
 	"log"
 
+	"minornine.com/hotel/src/master/models"
 	hotel_pb "minornine.com/hotel/src/proto"
 
 	"google.golang.org/grpc"
 )
 
 // SendSpawnServerRequest makes an RPC to a spawner to spawn a game server instance.
-func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, error) {
+func SendSpawnServerRequest(spawner *models.Spawner) (*hotel_pb.SpawnServerResponse, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
 
@@ -28,7 +29,7 @@ func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, er
 }
 
 // SendCheckStatusRequest asks the given spawner to report its current status.
-func SendCheckStatusRequest(spawner *Spawner) (*hotel_pb.SpawnerStatus, error) {
+func SendCheckStatusRequest(spawner *models.Spawner) (*hotel_pb.SpawnerStatus, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
 

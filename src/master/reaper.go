@@ -3,6 +3,8 @@ package master
 import (
 	"log"
 	"time"
+
+	"minornine.com/hotel/src/master/db"
 )
 
 // StartReaper will kick off a goroutine for all reaper tasks.
@@ -26,7 +28,7 @@ func reapSessions(config *Config, store *SessionStore) {
 
 func reapServers(config *Config) {
 	oldestTime := time.Now().Add(-config.ServerExpiration.Duration)
-	err := DeleteServersOlderThan(oldestTime.Unix())
+	err := db.DeleteServersOlderThan(oldestTime.Unix())
 	if err != nil {
 		log.Println(err)
 	}

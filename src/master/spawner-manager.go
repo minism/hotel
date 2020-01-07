@@ -6,12 +6,14 @@ import (
 	"sort"
 	"time"
 
+	"minornine.com/hotel/src/master/db"
+	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
 )
 
 // RegisterSpawner adds the given spawner to the database.
-func RegisterSpawner(spawner Spawner) {
-	err := DbInsertSpawner(spawner)
+func RegisterSpawner(spawner models.Spawner) {
+	err := db.DbInsertSpawner(spawner)
 	if err != nil {
 		log.Printf("Error registering spawner: %v", err)
 	} else {
@@ -22,9 +24,9 @@ func RegisterSpawner(spawner Spawner) {
 // GetAvailableSpawnerForGame returns the best available spawner for the given game ID.
 // Spawners are attempted to be load balanced by capacity, so this function should return
 // a spawner with the most capacity.
-func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
-	var ret Spawner
-	spawners := DbGetSpawnersByGameId(gameId)
+func GetAvailableSpawnerForGame(gameId shared.GameIDType) (models.Spawner, error) {
+	var ret models.Spawner
+	spawners := db.DbGetSpawnersByGameId(gameId)
 	if len(spawners) < 1 {
 		return ret, fmt.Errorf("No spawners available for game ID '%v'", gameId)
 	}
@@ -47,8 +49,8 @@ func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
 // SpawnServerForGame asks the given spawner to spawn a game server for the given game ID.
 // If successful, a GameServer representing the newly running server is returned (or the
 // expected game server that is being started).
-func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, error) {
-	var ret GameServer
+func SpawnServerForGame(spawner models.Spawner, gameId shared.GameIDType) (models.GameServer, error) {
+	var ret models.GameServer
 
 	// RPC to request a game server spawn.
 	response, err := SendSpawnServerRequest(&spawner)
@@ -58,7 +60,7 @@ func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, 
 	}
 
 	// Update the spawner status in the DB immediately.
-	DbUpdateSpawnerFromStatus(spawner.ID, response.Status)
+	db.DbUpdateSpawnerFromStatus(spawner.ID, response.Status)
 
 	// We return a partially filled GameServer struct, which at a minimum will have host:port
 	// for the client to connect to, because the spawner will know about this.
@@ -79,16 +81,16 @@ func InitSpawnerManager(config *Config) {
 	// Start a routine which updates the status of spawners.
 	go func() {
 		// TODO: Make this a count query instead.
-		var spawners = DbGetSpawners()
+		var spawners = db.DbGetSpawners()
 		log.Printf("Discovered %v existing spawners in database.", len(spawners))
 		for {
-			for _, spawner := range DbGetSpawners() {
+			for _, spawner := range db.DbGetSpawners() {
 				status, err := SendCheckStatusRequest(&spawner)
 				if err != nil {
 					log.Printf("Error checking status of spawner at %v, removing from pool.", spawner.Address())
-					DbDeleteSpawnerById(spawner.ID)
+					db.DbDeleteSpawnerById(spawner.ID)
 				} else {
-					DbUpdateSpawnerFromStatus(spawner.ID, status)
+					db.DbUpdateSpawnerFromStatus(spawner.ID, status)
 				}
 			}
 			time.Sleep(config.SpawnerCheckInterval.Duration)

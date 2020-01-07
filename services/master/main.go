@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"minornine.com/hotel/src/master"
+	"minornine.com/hotel/src/master/db"
 	hotel_pb "minornine.com/hotel/src/proto"
 	"minornine.com/hotel/src/shared"
 )
@@ -32,7 +33,7 @@ func main() {
 	// Initialize main components.
 	store := master.NewSessionStore()
 	config := master.LoadConfig(configPath)
-	master.InitDb(dataPath)
+	db.InitDb(dataPath)
 	master.InitSpawnerManager(&config)
 	master.StartReaper(&config, store)
 

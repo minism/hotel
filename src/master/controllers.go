@@ -10,6 +10,8 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"minornine.com/hotel/src/master/db"
+	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
 )
 
@@ -28,8 +30,8 @@ func HandleHealth(w http.ResponseWriter, r *http.Request) {
 //	- gameId: The game ID to filter by.
 func HandleListGameServers(w http.ResponseWriter, r *http.Request) {
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
-	servers := DbGetGameServersByGameId(gid)
-	var response ListServersResponse
+	servers := db.DbGetGameServersByGameId(gid)
+	var response models.ListServersResponse
 	response.Servers = servers
 	json.NewEncoder(w).Encode(response)
 }
@@ -46,7 +48,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, exists := DbGetGameServerById(ServerIDType(id))
+	server, exists := db.DbGetGameServerById(models.ServerIDType(id))
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -58,7 +60,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	config := context.Get(r, ConfigContextKey).(*Config)
 	session := context.Get(r, SessionContextKey).(Session)
-	server, err := DecodeAndValidateGameServer(r.Body, false)
+	server, err := models.DecodeAndValidateGameServer(r.Body, false)
 	fillImplicitGameServerFields(&server, r, session)
 	if err != nil {
 		// TODO: Full error object should not be returned in production mode
@@ -78,7 +80,7 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Db call.
-	server, err = DbInsertGameServer(server)
+	server, err = db.DbInsertGameServer(server)
 	if err != nil {
 		http.Error(w, "Failed to create server: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -130,8 +132,8 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	serverId := ServerIDType(id)
-	existingServer, exists := DbGetGameServerById(serverId)
+	serverId := models.ServerIDType(id)
+	existingServer, exists := db.DbGetGameServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -140,13 +142,13 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not authorized to modify that server.", http.StatusForbidden)
 		return
 	}
-	newServer, err := DecodeAndValidateGameServer(r.Body, true)
+	newServer, err := models.DecodeAndValidateGameServer(r.Body, true)
 	if err != nil {
 		http.Error(w, "Failed to parse request body: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	existingServer.Merge(newServer)
-	newServer, err = DbUpdateGameServerById(serverId, existingServer)
+	newServer, err = db.DbUpdateGameServerById(serverId, existingServer)
 	if err != nil {
 		http.Error(w, "Failed to update server: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -167,8 +169,8 @@ func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request URL: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	serverId := ServerIDType(id)
-	existingServer, exists := DbGetGameServerById(serverId)
+	serverId := models.ServerIDType(id)
+	existingServer, exists := db.DbGetGameServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -178,13 +180,13 @@ func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = DbDeleteGameServerById(serverId)
+	err = db.DbDeleteGameServerById(serverId)
 	if err != nil {
 		http.Error(w, "Failed to delete server: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func fillImplicitGameServerFields(server *GameServer, r *http.Request, session Session) {
+func fillImplicitGameServerFields(server *models.GameServer, r *http.Request, session Session) {
 	server.SessionID = session.ID
 	if len(server.Host) < 1 {
 		clientAddr := r.Header.Get("X-Forwarded-For")
