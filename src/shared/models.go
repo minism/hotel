@@ -20,7 +20,7 @@ type HostPolicy int
 
 const (
 	// HostPolicy_DISABLED means new servers may not be hosted or spawned by regular clients.
-	// They can only be hosted by priviledged clients (server owners).
+	// They can only be hosted by privileged clients (server owners).
 	HostPolicy_DISABLED HostPolicy = iota
 
 	// HostPolicy_CLIENTS_ONLY means new servers can be hosted and registered by any client,
