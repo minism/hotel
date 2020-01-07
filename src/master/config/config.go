@@ -1,17 +1,16 @@
 package config
 
 import (
+	"context"
 	"log"
 	"net/http"
 
-	"github.com/gorilla/context"
 	"minornine.com/hotel/src/shared"
 )
 
-const (
-	// ConfigContextKey is the key where config is stored in the HTTP request context.
-	ConfigContextKey = 1
-)
+type contextKeyType string
+
+const contextKey contextKeyType = "config"
 
 // Config contains global configuration for the hotel master instance.
 // The configuration is loaded from a JSON file provided at runtime.
@@ -29,9 +28,14 @@ type Config struct {
 // Middleware creates an HTTP middleware which injects config into the context.
 func (config *Config) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		context.Set(r, ConfigContextKey, config)
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(r.Context(), contextKey, config)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+// FromContext returns a config from the given context.
+func FromContext(ctx context.Context) Config {
+	return ctx.Value(contextKey).(Config)
 }
 
 // GetGameDefinition returns the GameDefinition struct for the given game ID,

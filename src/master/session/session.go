@@ -1,20 +1,19 @@
 package session
 
 import (
+	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gorilla/context"
 	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
 )
 
-const (
-	// SessionContextKey is the key where session is stored in the HTTP request context.
-	SessionContextKey = 0
-)
+type contextKeyType string
+
+const contextKey contextKeyType = "session"
 
 // Session represents a single user session (currently kept in memory).
 type Session struct {
@@ -61,12 +60,17 @@ func NewSessionStore() *SessionStore {
 func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if session, exists := store.loadSessionForRequest(r); exists {
-			context.Set(r, SessionContextKey, session)
-			next.ServeHTTP(w, r)
+			ctx := context.WithValue(r.Context(), contextKey, session)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 		}
 	})
+}
+
+// FromContext returns a session from the given context.
+func FromContext(ctx context.Context) Session {
+	return ctx.Value(contextKey).(Session)
 }
 
 // HandleIdentify generates a session ID for future communication.

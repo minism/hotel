@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
 	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
@@ -61,8 +60,8 @@ func GetGameServer(w http.ResponseWriter, r *http.Request) {
 
 // CreateGameServer adds a game server to the database.
 func CreateGameServer(w http.ResponseWriter, r *http.Request) {
-	config := context.Get(r, config.ConfigContextKey).(*config.Config)
-	session := context.Get(r, session.SessionContextKey).(session.Session)
+	config := config.FromContext(r.Context())
+	session := session.FromContext(r.Context())
 	server, err := models.DecodeAndValidateGameServer(r.Body, false)
 	fillImplicitGameServerFields(&server, r, session)
 	if err != nil {
@@ -93,8 +92,7 @@ func CreateGameServer(w http.ResponseWriter, r *http.Request) {
 
 // SpawnGameServer requests a game server spawn from a spawner instance.
 func SpawnGameServer(w http.ResponseWriter, r *http.Request) {
-	config := context.Get(r, config.ConfigContextKey).(*config.Config)
-	// session := context.Get(r, SessionContextKey).(Session)
+	config := config.FromContext(r.Context())
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
 
 	// Check if game definition allows spawning.
@@ -127,7 +125,7 @@ func SpawnGameServer(w http.ResponseWriter, r *http.Request) {
 // Path parameters:
 //	- id: The server to lookup.
 func UpdateGameServer(w http.ResponseWriter, r *http.Request) {
-	session := context.Get(r, session.SessionContextKey).(session.Session)
+	session := session.FromContext(r.Context())
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -164,7 +162,7 @@ func UpdateGameServer(w http.ResponseWriter, r *http.Request) {
 // Path parameters:
 //	- id: The server to delete.
 func DeleteGameServer(w http.ResponseWriter, r *http.Request) {
-	session := context.Get(r, session.SessionContextKey).(session.Session)
+	session := session.FromContext(r.Context())
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
