@@ -33,7 +33,7 @@ func CheckHealth(w http.ResponseWriter, r *http.Request) {
 //	- gameId: The game ID to filter by.
 func ListGameServers(w http.ResponseWriter, r *http.Request) {
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
-	servers := db.DbGetGameServersByGameId(gid)
+	servers := db.GetGameServersByGameId(gid)
 	var response models.ListServersResponse
 	response.Servers = servers
 	json.NewEncoder(w).Encode(response)
@@ -51,7 +51,7 @@ func GetGameServer(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Failed to parse request: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	server, exists := db.DbGetGameServerById(models.ServerIDType(id))
+	server, exists := db.GetGameServerById(models.ServerIDType(id))
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -83,7 +83,7 @@ func CreateGameServer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Db call.
-	server, err = db.DbInsertGameServer(server)
+	server, err = db.InsertGameServer(server)
 	if err != nil {
 		http.Error(w, "Failed to create server: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -136,7 +136,7 @@ func UpdateGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	serverId := models.ServerIDType(id)
-	existingServer, exists := db.DbGetGameServerById(serverId)
+	existingServer, exists := db.GetGameServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -151,7 +151,7 @@ func UpdateGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	existingServer.Merge(newServer)
-	newServer, err = db.DbUpdateGameServerById(serverId, existingServer)
+	newServer, err = db.UpdateGameServerById(serverId, existingServer)
 	if err != nil {
 		http.Error(w, "Failed to update server: "+err.Error(), http.StatusInternalServerError)
 		return
@@ -173,7 +173,7 @@ func DeleteGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	serverId := models.ServerIDType(id)
-	existingServer, exists := db.DbGetGameServerById(serverId)
+	existingServer, exists := db.GetGameServerById(serverId)
 	if !exists {
 		http.Error(w, "Server by that ID not found.", http.StatusNotFound)
 		return
@@ -183,7 +183,7 @@ func DeleteGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.DbDeleteGameServerById(serverId)
+	err = db.DeleteGameServerById(serverId)
 	if err != nil {
 		http.Error(w, "Failed to delete server: "+err.Error(), http.StatusInternalServerError)
 	}

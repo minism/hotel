@@ -9,11 +9,11 @@ import (
 	"minornine.com/hotel/src/shared"
 )
 
-func DbGetGameServersByGameId(gid shared.GameIDType) []models.GameServer {
+func GetGameServersByGameId(gid shared.GameIDType) []models.GameServer {
 	return serverQuery("WHERE game_id = ?", gid)
 }
 
-func DbGetGameServerById(id models.ServerIDType) (models.GameServer, bool) {
+func GetGameServerById(id models.ServerIDType) (models.GameServer, bool) {
 	var ret models.GameServer
 	servers := serverQuery("WHERE id = ?", id)
 	if len(servers) > 0 {
@@ -22,7 +22,7 @@ func DbGetGameServerById(id models.ServerIDType) (models.GameServer, bool) {
 	return ret, false
 }
 
-func DbInsertGameServer(server models.GameServer) (models.GameServer, error) {
+func InsertGameServer(server models.GameServer) (models.GameServer, error) {
 	stmt, err := db.Prepare(`
 		INSERT INTO servers (game_id, session_id, name, host, port, num_players, max_players, last_modified)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
@@ -46,7 +46,7 @@ func DbInsertGameServer(server models.GameServer) (models.GameServer, error) {
 	return server, nil
 }
 
-func DbUpdateGameServerById(id models.ServerIDType, server models.GameServer) (models.GameServer, error) {
+func UpdateGameServerById(id models.ServerIDType, server models.GameServer) (models.GameServer, error) {
 	stmt, err := db.Prepare(`
 		UPDATE servers
 		SET name = ?,
@@ -72,7 +72,7 @@ func DbUpdateGameServerById(id models.ServerIDType, server models.GameServer) (m
 	return server, nil
 }
 
-func DbDeleteGameServerById(id models.ServerIDType) error {
+func DeleteGameServerById(id models.ServerIDType) error {
 	stmt, err := db.Prepare(`
 		DELETE FROM servers
 		WHERE id = ?

@@ -9,15 +9,15 @@ import (
 	"minornine.com/hotel/src/shared"
 )
 
-func DbGetSpawners() []models.Spawner {
+func GetSpawners() []models.Spawner {
 	return spawnerQuery("")
 }
 
-func DbGetSpawnersByGameId(gid shared.GameIDType) []models.Spawner {
+func GetSpawnersByGameId(gid shared.GameIDType) []models.Spawner {
 	return spawnerQuery("WHERE game_id = ?", gid)
 }
 
-func DbInsertSpawner(spawner models.Spawner) error {
+func InsertSpawner(spawner models.Spawner) error {
 	stmt, err := db.Prepare(`
 		INSERT INTO spawners (game_id, host, port, num_game_servers, max_game_servers)
 		VALUES (?, ?, ?, ?, ?)`)
@@ -34,7 +34,7 @@ func DbInsertSpawner(spawner models.Spawner) error {
 	return nil
 }
 
-func DbUpdateSpawnerFromStatus(id int, status *hotel_pb.SpawnerStatus) error {
+func UpdateSpawnerFromStatus(id int, status *hotel_pb.SpawnerStatus) error {
 	stmt, err := db.Prepare(`
 		UPDATE spawners
 		SET game_id = ?,
@@ -56,7 +56,7 @@ func DbUpdateSpawnerFromStatus(id int, status *hotel_pb.SpawnerStatus) error {
 	return nil
 }
 
-func DbDeleteSpawnerById(id int) error {
+func DeleteSpawnerById(id int) error {
 	stmt, err := db.Prepare(`
 		DELETE FROM spawners
 		WHERE id = ?
