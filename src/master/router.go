@@ -1,4 +1,4 @@
-package router
+package master
 
 import (
 	"github.com/gorilla/mux"
@@ -13,18 +13,18 @@ func CreateRouter(config *config.Config, store *session.SessionStore) *mux.Route
 	router.Use(config.Middleware)
 
 	// Unauthenticated routes.
-	router.HandleFunc("/health", controllers.CheckHealth).Methods("GET")
+	router.HandleFunc("/health", controllers.HandleHealth).Methods("GET")
 	router.HandleFunc("/identify", store.HandleIdentify).Methods("POST")
 
 	// Authenticated routes.
 	authRouter := router.PathPrefix("/").Subrouter()
 	authRouter.Use(store.Middleware)
-	authRouter.HandleFunc("/servers", controllers.ListGameServers).Methods("GET")
-	authRouter.HandleFunc("/servers/{id}", controllers.GetGameServer).Methods("GET")
-	authRouter.HandleFunc("/servers", controllers.CreateGameServer).Methods("POST")
-	authRouter.HandleFunc("/servers/{id}", controllers.UpdateGameServer).Methods("PUT")
-	authRouter.HandleFunc("/servers/{id}", controllers.DeleteGameServer).Methods("DELETE")
-	authRouter.HandleFunc("/spawn", controllers.SpawnGameServer).Methods("POST")
+	authRouter.HandleFunc("/servers", controllers.HandleListGameServers).Methods("GET")
+	authRouter.HandleFunc("/servers/{id}", controllers.HandleGetGameServer).Methods("GET")
+	authRouter.HandleFunc("/servers", controllers.HandleCreateGameServer).Methods("POST")
+	authRouter.HandleFunc("/servers/{id}", controllers.HandleUpdateGameServer).Methods("PUT")
+	authRouter.HandleFunc("/servers/{id}", controllers.HandleDeleteGameServer).Methods("DELETE")
+	authRouter.HandleFunc("/spawn", controllers.HandleSpawnGameServer).Methods("POST")
 
 	return router
 }
