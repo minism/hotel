@@ -1,4 +1,4 @@
-package master
+package rpc
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"sort"
 	"time"
 
+	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
 	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
@@ -77,7 +78,7 @@ func SpawnServerForGame(spawner models.Spawner, gameId shared.GameIDType) (model
 
 // InitSpawnerManager kicks off a goroutine which cleans up dead spawners.
 // TODO: Should be in reaper?
-func InitSpawnerManager(config *Config) {
+func InitSpawnerManager(config *config.Config) {
 	// Start a routine which updates the status of spawners.
 	go func() {
 		// TODO: Make this a count query instead.

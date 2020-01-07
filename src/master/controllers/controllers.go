@@ -1,4 +1,4 @@
-package master
+package controllers
 
 import (
 	"encoding/json"
@@ -10,8 +10,11 @@ import (
 
 	"github.com/gorilla/context"
 	"github.com/gorilla/mux"
+	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
 	"minornine.com/hotel/src/master/models"
+	"minornine.com/hotel/src/master/rpc"
+	"minornine.com/hotel/src/master/session"
 	"minornine.com/hotel/src/shared"
 )
 
@@ -58,8 +61,8 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 
 // HandleCreateGameServer adds a game server to the database.
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
-	config := context.Get(r, ConfigContextKey).(*Config)
-	session := context.Get(r, SessionContextKey).(Session)
+	config := context.Get(r, config.ConfigContextKey).(*config.Config)
+	session := context.Get(r, session.SessionContextKey).(session.Session)
 	server, err := models.DecodeAndValidateGameServer(r.Body, false)
 	fillImplicitGameServerFields(&server, r, session)
 	if err != nil {
@@ -90,7 +93,7 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 
 // HandleSpawnGameServer requests a game server spawn from a spawner instance.
 func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
-	config := context.Get(r, ConfigContextKey).(*Config)
+	config := context.Get(r, config.ConfigContextKey).(*config.Config)
 	// session := context.Get(r, SessionContextKey).(Session)
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
 
@@ -105,13 +108,13 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	spawner, err := GetAvailableSpawnerForGame(gid)
+	spawner, err := rpc.GetAvailableSpawnerForGame(gid)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	server, err := SpawnServerForGame(spawner, gid)
+	server, err := rpc.SpawnServerForGame(spawner, gid)
 	if err != nil {
 		http.Error(w, "Failed to spawn server (internal error).", http.StatusInternalServerError)
 		return
@@ -124,7 +127,7 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 // Path parameters:
 //	- id: The server to lookup.
 func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
-	session := context.Get(r, SessionContextKey).(Session)
+	session := context.Get(r, session.SessionContextKey).(session.Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -161,7 +164,7 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 // Path parameters:
 //	- id: The server to delete.
 func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
-	session := context.Get(r, SessionContextKey).(Session)
+	session := context.Get(r, session.SessionContextKey).(session.Session)
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
@@ -186,7 +189,7 @@ func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func fillImplicitGameServerFields(server *models.GameServer, r *http.Request, session Session) {
+func fillImplicitGameServerFields(server *models.GameServer, r *http.Request, session session.Session) {
 	server.SessionID = session.ID
 	if len(server.Host) < 1 {
 		clientAddr := r.Header.Get("X-Forwarded-For")

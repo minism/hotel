@@ -12,8 +12,12 @@ import (
 	"os"
 
 	"github.com/gorilla/handlers"
-	"minornine.com/hotel/src/master"
+	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
+	"minornine.com/hotel/src/master/reaper"
+	"minornine.com/hotel/src/master/router"
+	"minornine.com/hotel/src/master/rpc"
+	"minornine.com/hotel/src/master/session"
 	hotel_pb "minornine.com/hotel/src/proto"
 	"minornine.com/hotel/src/shared"
 )
@@ -31,15 +35,15 @@ func main() {
 	shared.InitLogging()
 
 	// Initialize main components.
-	store := master.NewSessionStore()
-	config := master.LoadConfig(configPath)
+	store := session.NewSessionStore()
+	config := config.LoadConfig(configPath)
 	db.InitDb(dataPath)
-	master.InitSpawnerManager(&config)
-	master.StartReaper(&config, store)
+	rpc.InitSpawnerManager(&config)
+	reaper.StartReaper(&config, store)
 
 	// Start the HTTP server in a goroutine.
 	httpAddr := fmt.Sprintf(":%v", DEFAULT_HTTP_PORT)
-	mainRouter := handlers.LoggingHandler(os.Stdout, master.CreateRouter(&config, store))
+	mainRouter := handlers.LoggingHandler(os.Stdout, router.CreateRouter(&config, store))
 	log.Println("Running HTTP server on", httpAddr)
 	go func() {
 		log.Fatal(http.ListenAndServe(httpAddr, mainRouter))
@@ -52,7 +56,7 @@ func main() {
 		panic(fmt.Sprintf("Error binding TCP socket to %v", rpcAddr))
 	}
 	grpcServer := grpc.NewServer()
-	hotel_pb.RegisterMasterServiceServer(grpcServer, &master.MasterService{})
+	hotel_pb.RegisterMasterServiceServer(grpcServer, &rpc.MasterService{})
 	log.Println("Running RPC server on", rpcAddr)
 	go func() {
 		log.Fatal(grpcServer.Serve(tcpListener))
