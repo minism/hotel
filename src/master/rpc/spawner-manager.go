@@ -54,7 +54,7 @@ func SpawnServerForGame(spawner models.Spawner, gameId shared.GameIDType) (model
 	var ret models.GameServer
 
 	// RPC to request a game server spawn.
-	response, err := SendSpawnServerRequest(&spawner)
+	response, err := SendSpawnServerRequest(spawner)
 	if err != nil {
 		log.Printf("Error making spawn RPC: %v", err)
 		return ret, err
@@ -86,7 +86,7 @@ func InitSpawnerManager(config *config.Config) {
 		log.Printf("Discovered %v existing spawners in database.", len(spawners))
 		for {
 			for _, spawner := range db.GetSpawners() {
-				status, err := SendCheckStatusRequest(&spawner)
+				status, err := SendCheckStatusRequest(spawner)
 				if err != nil {
 					log.Printf("Error checking status of spawner at %v, removing from pool.", spawner.Address())
 					db.DeleteSpawnerById(spawner.ID)

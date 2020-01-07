@@ -22,6 +22,7 @@ type Config struct {
 	GameDefs             []shared.GameDefinition     `json:"gameDefs"`
 	AllowUndefinedGames  bool                        `json:"allowUndefinedGames"`
 
+	// Denormalized / cached fields.
 	gameDefsById map[shared.GameIDType]shared.GameDefinition
 }
 
@@ -34,8 +35,8 @@ func (config *Config) Middleware(next http.Handler) http.Handler {
 }
 
 // FromContext returns a config from the given context.
-func FromContext(ctx context.Context) Config {
-	return ctx.Value(contextKey).(Config)
+func FromContext(ctx context.Context) *Config {
+	return ctx.Value(contextKey).(*Config)
 }
 
 // GetGameDefinition returns the GameDefinition struct for the given game ID,
@@ -55,17 +56,17 @@ func (config *Config) GetGameDefinition(gid shared.GameIDType) (shared.GameDefin
 }
 
 // LoadConfig takes a path and returns a master config instance.
-func LoadConfig(configPath string) Config {
+func LoadConfig(configPath string) *Config {
 	var config Config
 	shared.LoadConfigFromPath(configPath, &config)
 
-	// Fill in denormalized/private fields.
+	// Fill in denormalized/cached fields.
 	config.gameDefsById = make(map[shared.GameIDType]shared.GameDefinition)
 	for _, def := range config.GameDefs {
 		log.Printf("Supported game: %v", def.GameID)
 		config.gameDefsById[def.GameID] = def
 	}
-	return config
+	return &config
 }
 
 func (config *Config) defaultGameDefinition() shared.GameDefinition {

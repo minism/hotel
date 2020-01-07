@@ -33,9 +33,9 @@ func CheckHealth(w http.ResponseWriter, r *http.Request) {
 func ListGameServers(w http.ResponseWriter, r *http.Request) {
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
 	servers := db.GetGameServersByGameId(gid)
-	var response models.ListServersResponse
-	response.Servers = servers
-	json.NewEncoder(w).Encode(response)
+	json.NewEncoder(w).Encode(models.ListServersResponse{
+		Servers: servers,
+	})
 }
 
 // GetGameServer returns a particular server by ID.

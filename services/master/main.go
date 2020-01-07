@@ -38,12 +38,12 @@ func main() {
 	store := session.NewSessionStore()
 	config := config.LoadConfig(configPath)
 	db.InitDb(dataPath)
-	rpc.InitSpawnerManager(&config)
-	reaper.StartReaper(&config, store)
+	rpc.InitSpawnerManager(config)
+	reaper.StartReaper(config, store)
 
 	// Start the HTTP server in a goroutine.
 	httpAddr := fmt.Sprintf(":%v", DEFAULT_HTTP_PORT)
-	mainRouter := handlers.LoggingHandler(os.Stdout, router.CreateRouter(&config, store))
+	mainRouter := handlers.LoggingHandler(os.Stdout, router.CreateRouter(config, store))
 	log.Println("Running HTTP server on", httpAddr)
 	go func() {
 		log.Fatal(http.ListenAndServe(httpAddr, mainRouter))
