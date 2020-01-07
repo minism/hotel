@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
-	"time"
 
-	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
 	"minornine.com/hotel/src/master/models"
 	"minornine.com/hotel/src/shared"
@@ -74,27 +72,4 @@ func SpawnServerForGame(spawner models.Spawner, gameId shared.GameIDType) (model
 	ret.Port = int(response.Port)
 	ret.GameID = spawner.GameID
 	return ret, nil
-}
-
-// InitSpawnerManager kicks off a goroutine which cleans up dead spawners.
-// TODO: Should be in reaper?
-func InitSpawnerManager(config *config.Config) {
-	// Start a routine which updates the status of spawners.
-	go func() {
-		// TODO: Make this a count query instead.
-		var spawners = db.GetSpawners()
-		log.Printf("Discovered %v existing spawners in database.", len(spawners))
-		for {
-			for _, spawner := range db.GetSpawners() {
-				status, err := SendCheckStatusRequest(spawner)
-				if err != nil {
-					log.Printf("Error checking status of spawner at %v, removing from pool.", spawner.Address())
-					db.DeleteSpawnerById(spawner.ID)
-				} else {
-					db.UpdateSpawnerFromStatus(spawner.ID, status)
-				}
-			}
-			time.Sleep(config.SpawnerCheckInterval.Duration)
-		}
-	}()
 }

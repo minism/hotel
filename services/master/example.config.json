@@ -2,7 +2,6 @@
     "reaperInterval": "60s",
     "sessionExpiration": "10m",
     "serverExpiration": "60s",
-    "spawnerCheckInterval": "60s",
     "allowUndefinedGames": true,
     "gameDefs": [
         {

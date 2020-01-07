@@ -15,12 +15,11 @@ const contextKey contextKeyType = "config"
 // Config contains global configuration for the hotel master instance.
 // The configuration is loaded from a JSON file provided at runtime.
 type Config struct {
-	ReaperInterval       shared.SerializableDuration `json:"reaperInterval"`
-	SessionExpiration    shared.SerializableDuration `json:"sessionExpiration"`
-	ServerExpiration     shared.SerializableDuration `json:"serverExpiration"`
-	SpawnerCheckInterval shared.SerializableDuration `json:"spawnerCheckInterval"`
-	GameDefs             []shared.GameDefinition     `json:"gameDefs"`
-	AllowUndefinedGames  bool                        `json:"allowUndefinedGames"`
+	ReaperInterval      shared.SerializableDuration `json:"reaperInterval"`
+	SessionExpiration   shared.SerializableDuration `json:"sessionExpiration"`
+	ServerExpiration    shared.SerializableDuration `json:"serverExpiration"`
+	GameDefs            []shared.GameDefinition     `json:"gameDefs"`
+	AllowUndefinedGames bool                        `json:"allowUndefinedGames"`
 
 	// Denormalized / cached fields.
 	gameDefsById map[shared.GameIDType]shared.GameDefinition

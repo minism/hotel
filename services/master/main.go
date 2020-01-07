@@ -38,7 +38,6 @@ func main() {
 	store := session.NewSessionStore()
 	config := config.LoadConfig(configPath)
 	db.InitDb(dataPath)
-	rpc.InitSpawnerManager(config)
 	reaper.StartReaper(config, store)
 
 	// Start the HTTP server in a goroutine.

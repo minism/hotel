@@ -6,6 +6,7 @@ import (
 
 	"minornine.com/hotel/src/master/config"
 	"minornine.com/hotel/src/master/db"
+	"minornine.com/hotel/src/master/rpc"
 	"minornine.com/hotel/src/master/session"
 )
 
@@ -15,6 +16,7 @@ func StartReaper(config *config.Config, store *session.SessionStore) {
 		for {
 			reapSessions(config, store)
 			reapServers(config)
+			reapSpawners(config)
 			time.Sleep(config.ReaperInterval.Duration)
 		}
 	}()
@@ -33,5 +35,17 @@ func reapServers(config *config.Config) {
 	err := db.DeleteServersOlderThan(oldestTime.Unix())
 	if err != nil {
 		log.Println(err)
+	}
+}
+
+func reapSpawners(config *config.Config) {
+	for _, spawner := range db.GetSpawners() {
+		status, err := rpc.SendCheckStatusRequest(spawner)
+		if err != nil {
+			log.Printf("Error checking status of spawner at %v, removing from pool.", spawner.Address())
+			db.DeleteSpawnerById(spawner.ID)
+		} else {
+			db.UpdateSpawnerFromStatus(spawner.ID, status)
+		}
 	}
 }
