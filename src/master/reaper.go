@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// StartReaper will kick off a goroutine for all reaper tasks.
 func StartReaper(config *Config, store *SessionStore) {
 	go func() {
 		for {

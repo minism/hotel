@@ -17,10 +17,15 @@ const (
 	ok = "OK"
 )
 
+// HandleHealth returns OK if the server is healthy.
 func HandleHealth(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(ok)
 }
 
+// HandleListGameServers lists all game servers for the given ID.
+//
+// Query parameters:
+//	- gameId: The game ID to filter by.
 func HandleListGameServers(w http.ResponseWriter, r *http.Request) {
 	gid := shared.GameIDType(r.URL.Query().Get("gameId"))
 	servers := DbGetGameServersByGameId(gid)
@@ -29,6 +34,10 @@ func HandleListGameServers(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
+// HandleGetGameServer returns a particular server by ID.
+//
+// Path parameters:
+//	- id: The server to lookup.
 func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, err := strconv.Atoi(vars["id"])
@@ -45,6 +54,7 @@ func HandleGetGameServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
+// HandleCreateGameServer adds a game server to the database.
 func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	config := context.Get(r, ConfigContextKey).(*Config)
 	session := context.Get(r, SessionContextKey).(Session)
@@ -76,6 +86,7 @@ func HandleCreateGameServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
+// HandleSpawnGameServer requests a game server spawn from a spawner instance.
 func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 	config := context.Get(r, ConfigContextKey).(*Config)
 	// session := context.Get(r, SessionContextKey).(Session)
@@ -106,6 +117,10 @@ func HandleSpawnGameServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(server)
 }
 
+// HandleUpdateGameServer updates an existing game server.
+//
+// Path parameters:
+//	- id: The server to lookup.
 func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)
@@ -139,6 +154,10 @@ func HandleUpdateGameServer(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(existingServer)
 }
 
+// HandleDeleteGameServer deletes an existing game server.
+//
+// Path parameters:
+//	- id: The server to delete.
 func HandleDeleteGameServer(w http.ResponseWriter, r *http.Request) {
 	session := context.Get(r, SessionContextKey).(Session)
 	vars := mux.Vars(r)

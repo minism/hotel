@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// CreateRouter will create the main mux router used by the master HTTP service.
 func CreateRouter(config *Config, store *SessionStore) *mux.Router {
 	var router = mux.NewRouter()
 	router.Use(config.Middleware)

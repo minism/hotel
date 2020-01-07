@@ -14,8 +14,11 @@ import (
 	hotel_pb "minornine.com/hotel/src/proto"
 )
 
+// MasterService contains RPC implementations for the master service.
 type MasterService struct{}
 
+// RegisterSpawner adds the requesting spawner to the database and makes
+// it available to clients for requesting spawns.
 func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.RegisterSpawnerRequest) (*hotel_pb.RegisterSpawnerResponse, error) {
 	pr, ok := peer.FromContext(ctx)
 	if ok {

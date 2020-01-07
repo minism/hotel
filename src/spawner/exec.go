@@ -8,6 +8,8 @@ import (
 	"os/exec"
 )
 
+// LaunchGameServer execs the game server subprocess on the given port.
+// The Process pointer representing the new process is returned.
 func LaunchGameServer(config *Config, port uint32) (*os.Process, error) {
 	cmd := exec.Command(config.GameServerPath, gameServerFlags(config, port)...)
 	log.Printf("Launching game server with command: %v", cmd)

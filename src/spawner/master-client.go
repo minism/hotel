@@ -10,16 +10,19 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+// MasterClient manages the RPC connection to the master server.
 type MasterClient struct {
 	Addr string
 }
 
+// NewMasterClient initializes and returns a MasterClient.
 func NewMasterClient(addr string) MasterClient {
 	return MasterClient{
 		Addr: addr,
 	}
 }
 
+// Register makes an RPC to the master server to register this spawner instance.
 func (c *MasterClient) Register(port uint32, spawnerStatus hotel_pb.SpawnerStatus) error {
 	// TODO: Credentials.
 	var opts []grpc.DialOption
@@ -43,8 +46,8 @@ func (c *MasterClient) Register(port uint32, spawnerStatus hotel_pb.SpawnerStatu
 	if st.Err() != nil {
 		log.Printf("Error making master RPC: %v", st.Err())
 		return err
-	} else {
-		log.Printf("OK response from master service")
-		return nil
 	}
+
+	log.Println("Registered successfully with master service.")
+	return nil
 }

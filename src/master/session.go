@@ -11,9 +11,11 @@ import (
 )
 
 const (
+	// SessionContextKey is the key where session is stored in the HTTP request context.
 	SessionContextKey = 0
 )
 
+// Session represents a single user session (currently kept in memory).
 type Session struct {
 	// The unique ID for the session.
 	ID int
@@ -28,6 +30,7 @@ type Session struct {
 	LastAccess time.Time
 }
 
+// OwnsServerId returns whether the given server ID is owned by this session.
 func (session *Session) OwnsServerId(id ServerIDType) bool {
 	if ok, exists := session.Servers[id]; exists {
 		return ok
@@ -37,6 +40,7 @@ func (session *Session) OwnsServerId(id ServerIDType) bool {
 
 var nextSessionId int = 1
 
+// SessionStore is a singleton which stores all session data.
 // TODO: This should be externalized to filesystem or database at some point once
 // we need to run multiple instances.
 type SessionStore struct {
@@ -44,12 +48,15 @@ type SessionStore struct {
 	Sessions map[string]Session
 }
 
+// NewSessionStore creates and initializes a session store.
 func NewSessionStore() *SessionStore {
 	store := &SessionStore{}
 	store.Sessions = make(map[string]Session)
 	return store
 }
 
+// Middleware creates a middleware function which injects correct session into the HTTP context.
+// If no session could be loaded for the request, HTTP 403 is returned instead.
 func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if session, exists := store.loadSessionForRequest(r); exists {
@@ -61,12 +68,13 @@ func (store *SessionStore) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// Generate a session ID for future communication. The session ID is meant to not be
-// guessable, and we rely on HTTPS (with certificate pinning) for reasonably secure
-// communication and protection.
+// HandleIdentify generates a session ID for future communication.
+// The session ID is meant to not be guessable, and we rely on HTTPS
+// (with certificate pinning) for reasonably secure communication and protection.
 // The session ID is primarily used to manage resources created by a particular
 // client. For example, a game server will register itself and generate a session,
 // and only that server can update its status.
+// TODO: For session expiry, this should return a token alias instead of echo.
 func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request) {
 	var sessionToken string
 	if session, exists := store.loadSessionForRequest(r); exists {
@@ -87,6 +95,7 @@ func (store *SessionStore) HandleIdentify(w http.ResponseWriter, r *http.Request
 	json.NewEncoder(w).Encode(response)
 }
 
+// CreateSession creates a session for the given token and stores it.
 func (store *SessionStore) CreateSession(sessionToken string) {
 	session := Session{
 		ID:      nextSessionId,
@@ -97,6 +106,7 @@ func (store *SessionStore) CreateSession(sessionToken string) {
 	store.Sessions[sessionToken] = session
 }
 
+// DeleteSession delets the session associated with the given token.
 func (store *SessionStore) DeleteSession(sessionToken string) {
 	delete(store.Sessions, sessionToken)
 }

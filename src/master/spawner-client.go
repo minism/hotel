@@ -9,11 +9,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-const (
-	// Use the docker service name.
-	SPAWNER_ADDRESS = "spawner:3001"
-)
-
+// SendSpawnServerRequest makes an RPC to a spawner to spawn a game server instance.
 func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())
@@ -31,6 +27,7 @@ func SendSpawnServerRequest(spawner *Spawner) (*hotel_pb.SpawnServerResponse, er
 	return response, err
 }
 
+// SendCheckStatusRequest asks the given spawner to report its current status.
 func SendCheckStatusRequest(spawner *Spawner) (*hotel_pb.SpawnerStatus, error) {
 	var opts []grpc.DialOption
 	opts = append(opts, grpc.WithInsecure())

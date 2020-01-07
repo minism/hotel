@@ -7,10 +7,12 @@ import (
 	"time"
 )
 
+// SerializableDuration is a Duration type which can be serialized to/from JSON.
 type SerializableDuration struct {
 	time.Duration
 }
 
+// UnmarshalJSON fills the instance from JSON data.
 func (sd *SerializableDuration) UnmarshalJSON(data []byte) error {
 	var str string
 	if err := json.Unmarshal(data, &str); err != nil {
@@ -24,6 +26,7 @@ func (sd *SerializableDuration) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// LoadConfigFromPath loads an arbitrary object from JSON data specified by the given path.
 func LoadConfigFromPath(path string, config interface{}) interface{} {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {

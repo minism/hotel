@@ -15,6 +15,7 @@ import (
 
 var db *sql.DB
 
+// InitDb initializes the database at the given path and ensures tables are created.
 func InitDb(dataPath string) {
 	dbPath := filepath.Join(dataPath, "data.db")
 	log.Printf("Initializing database at %v...", dbPath)

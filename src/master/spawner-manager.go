@@ -1,7 +1,6 @@
 package master
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"sort"
@@ -10,6 +9,7 @@ import (
 	"minornine.com/hotel/src/shared"
 )
 
+// RegisterSpawner adds the given spawner to the database.
 func RegisterSpawner(spawner Spawner) {
 	err := DbInsertSpawner(spawner)
 	if err != nil {
@@ -19,11 +19,14 @@ func RegisterSpawner(spawner Spawner) {
 	}
 }
 
+// GetAvailableSpawnerForGame returns the best available spawner for the given game ID.
+// Spawners are attempted to be load balanced by capacity, so this function should return
+// a spawner with the most capacity.
 func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
 	var ret Spawner
 	spawners := DbGetSpawnersByGameId(gameId)
 	if len(spawners) < 1 {
-		return ret, errors.New(fmt.Sprintf("No spawners available for game ID '%v'", gameId))
+		return ret, fmt.Errorf("No spawners available for game ID '%v'", gameId)
 	}
 
 	// Implement basic load balancing by sorting spawners by capacity.
@@ -35,12 +38,15 @@ func GetAvailableSpawnerForGame(gameId shared.GameIDType) (Spawner, error) {
 	// Ensure there is at least some capacity.
 	ret = spawners[0]
 	if ret.Capacity() < 1 {
-		return ret, errors.New(fmt.Sprintf("No capacity left for game ID '%v'", gameId))
+		return ret, fmt.Errorf("No capacity left for game ID '%v'", gameId)
 	}
 
 	return ret, nil
 }
 
+// SpawnServerForGame asks the given spawner to spawn a game server for the given game ID.
+// If successful, a GameServer representing the newly running server is returned (or the
+// expected game server that is being started).
 func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, error) {
 	var ret GameServer
 
@@ -67,6 +73,8 @@ func SpawnServerForGame(spawner Spawner, gameId shared.GameIDType) (GameServer, 
 	return ret, nil
 }
 
+// InitSpawnerManager kicks off a goroutine which cleans up dead spawners.
+// TODO: Should be in reaper?
 func InitSpawnerManager(config *Config) {
 	// Start a routine which updates the status of spawners.
 	go func() {

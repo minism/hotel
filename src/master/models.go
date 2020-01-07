@@ -9,10 +9,10 @@ import (
 	"minornine.com/hotel/src/shared"
 )
 
-// Unique ID for a game server instance.
+// ServerIDType is a type alias for game server IDs.
 type ServerIDType int
 
-// A connectable game server instance.
+// GameServer represents a connectable game server instance.
 type GameServer struct {
 	ID         ServerIDType      `json:"id"`
 	GameID     shared.GameIDType `json:"gameId"`
@@ -24,8 +24,8 @@ type GameServer struct {
 	MaxPlayers int               `json:"maxPlayers"`
 }
 
-// Decode a JSON version of GameServer, validate it, and return it.
-// If any steps fail, returns an error.
+// DecodeAndValidateGameServer decodes a JSON version of GameServer, validates it, and returns it.
+// If any steps fail, an error is returned.
 func DecodeAndValidateGameServer(reader io.Reader, isUpdate bool) (GameServer, error) {
 	decoder := json.NewDecoder(reader)
 	var server GameServer
@@ -40,6 +40,7 @@ func DecodeAndValidateGameServer(reader io.Reader, isUpdate bool) (GameServer, e
 	return server, nil
 }
 
+// Validate checks if any GameServer fields are invalid and returns an error if so.
 func (s *GameServer) Validate(isUpdate bool) error {
 	if !isUpdate && len(s.Name) < 1 {
 		return errors.New("Name must be non-empty.")
@@ -50,6 +51,7 @@ func (s *GameServer) Validate(isUpdate bool) error {
 	return nil
 }
 
+// Merge will merge all fields from the given game server into this instance.
 func (s *GameServer) Merge(other GameServer) {
 	// TODO: This should use reflection to walk mutable fields and apply them.
 	if len(other.Name) > 0 {
@@ -69,7 +71,7 @@ func (s *GameServer) Merge(other GameServer) {
 	}
 }
 
-// A hotel spawner instance.
+// Spawner represents a running hotel spawner instance which we can RPC to.
 type Spawner struct {
 	ID             int
 	Host           string
@@ -79,10 +81,12 @@ type Spawner struct {
 	MaxGameServers uint32
 }
 
+// Capacity returns the number of available game servers this spawner could spawn.
 func (s *Spawner) Capacity() uint32 {
 	return s.MaxGameServers - s.NumGameServers
 }
 
+// Address returns a fully qualified host:port string for the spawner.
 func (s *Spawner) Address() string {
 	return fmt.Sprintf("%v:%v", s.Host, s.Port)
 }

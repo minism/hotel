@@ -4,10 +4,8 @@ import (
 	"minornine.com/hotel/src/shared"
 )
 
-const (
-	ConfigContextKey = 1
-)
-
+// Config contains global configuration for the hotel spawner instance.
+// The configuration is loaded from a JSON file provided at runtime.
 type Config struct {
 	SupportedGameID shared.GameIDType `json:"supportedGameId"`
 	MaxGameServers  uint32            `json:"maxGameServers"`
@@ -22,6 +20,7 @@ type Config struct {
 	Port uint32
 }
 
+// LoadConfig loads and returns a spawner config from the given path.
 func LoadConfig(configPath string) Config {
 	var config Config
 	shared.LoadConfigFromPath(configPath, &config)

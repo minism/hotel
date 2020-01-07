@@ -10,11 +10,13 @@ import (
 	hotel_pb "minornine.com/hotel/src/proto"
 )
 
+// SpawnerService contains RPC implementations for the spawner service.
 type SpawnerService struct {
 	config     *Config
 	controller *ServerController
 }
 
+// NewSpawnerService creates and initializes a SpawnerService.
 func NewSpawnerService(config *Config, controller *ServerController) SpawnerService {
 	return SpawnerService{
 		config:     config,
@@ -22,6 +24,7 @@ func NewSpawnerService(config *Config, controller *ServerController) SpawnerServ
 	}
 }
 
+// GetStatus returns the status proto representing the current status of the spawner.
 func (s *SpawnerService) GetStatus() hotel_pb.SpawnerStatus {
 	return hotel_pb.SpawnerStatus{
 		SupportedGameId: string(s.config.SupportedGameID),
@@ -30,6 +33,7 @@ func (s *SpawnerService) GetStatus() hotel_pb.SpawnerStatus {
 	}
 }
 
+// CheckStatus returns the current status via RPC.
 func (s *SpawnerService) CheckStatus(context.Context, *hotel_pb.CheckStatusRequest) (*hotel_pb.CheckStatusResponse, error) {
 	status := s.GetStatus()
 	return &hotel_pb.CheckStatusResponse{
@@ -37,6 +41,7 @@ func (s *SpawnerService) CheckStatus(context.Context, *hotel_pb.CheckStatusReque
 	}, nil
 }
 
+// SpawnServer attempts to spawn a game server via the incoming RPC request.
 func (s *SpawnerService) SpawnServer(context.Context, *hotel_pb.SpawnServerRequest) (*hotel_pb.SpawnServerResponse, error) {
 	if s.controller.Capacity() < 1 {
 		return nil, status.Error(codes.ResourceExhausted, "Spawner is already running its maximum server capacity.")
