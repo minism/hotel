@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"os"
 	"time"
 
 	hotel_pb "minornine.com/hotel/src/proto"
@@ -67,8 +66,5 @@ func main() {
 	}()
 
 	// Setup a SIGINT (CTRL+C) shutdown signal and block on it.
-	c := shared.CreateSigintChannel()
-	<-c
-	log.Println("Shutting down.")
-	os.Exit(0)
+	shared.WaitForSigIntAndQuit()
 }

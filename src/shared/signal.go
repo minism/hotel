@@ -1,13 +1,16 @@
 package shared
 
 import (
+	"log"
 	"os"
 	"os/signal"
 )
 
-// CreateSigintChannel returns a channel which listens to SIGINT.
-func CreateSigintChannel() chan os.Signal {
+// WaitForSigIntAndQuit blocks until a SIGINT is received and then exits the program.
+func WaitForSigIntAndQuit() {
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, os.Interrupt)
-	return c
+	<-c
+	log.Println("Shutting down.")
+	os.Exit(0)
 }
