@@ -12,7 +12,7 @@ MAINTAINER joshbothun@gmail.com
 
 # Requirements for compiling go-sqlite3.  This could be a base image.
 # https://github.com/mattn/go-sqlite3
-RUN apk add --update gcc musl-dev
+RUN apk add --update gcc musl-dev git
 
 # Set the working directory to where go will expect packages.
 WORKDIR $GOPATH/src/minornine.com/hotel/
