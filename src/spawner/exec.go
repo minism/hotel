@@ -36,5 +36,8 @@ func gameServerFlags(config *Config, port uint32) []string {
 	flags := []string{
 		fmt.Sprintf("--port=%v", port),
 	}
+	if config.Host != "" {
+		flags = append(flags, fmt.Sprintf("--host=%v", config.Host))
+	}
 	return append(config.GameServerFlags, flags...)
 }

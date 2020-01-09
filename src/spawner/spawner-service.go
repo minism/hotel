@@ -53,6 +53,7 @@ func (s *SpawnerService) SpawnServer(context.Context, *hotel_pb.SpawnServerReque
 	}
 	status := s.GetStatus()
 	return &hotel_pb.SpawnServerResponse{
+		Host:		s.config.Host,
 		Port:   port,
 		Status: &status,
 	}, nil
