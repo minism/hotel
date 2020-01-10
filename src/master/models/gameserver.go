@@ -19,8 +19,8 @@ type GameServer struct {
 	Name       string            `json:"name"`
 	Host       string            `json:"host"`
 	Port       int               `json:"port"`
-	NumPlayers int               `json:"numPlayers"`
-	MaxPlayers int               `json:"maxPlayers"`
+	NumPlayers *int              `json:"numPlayers"`
+	MaxPlayers *int              `json:"maxPlayers"`
 }
 
 // DecodeAndValidateGameServer decodes a JSON version of GameServer, validates it, and returns it.
@@ -62,10 +62,10 @@ func (s *GameServer) Merge(other GameServer) {
 	if other.Port > 0 {
 		s.Port = other.Port
 	}
-	if other.NumPlayers > 0 {
+	if other.NumPlayers != nil {
 		s.NumPlayers = other.NumPlayers
 	}
-	if other.MaxPlayers > 0 {
+	if other.MaxPlayers != nil {
 		s.MaxPlayers = other.MaxPlayers
 	}
 }
