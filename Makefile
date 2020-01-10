@@ -18,7 +18,7 @@ ${PROTO_OUTS}: ${PROTO_SRCS}
 	mkdir -p src/proto
 	protoc --go_out=plugins=grpc:src $^
 
-${DOC_OUTS}: ${DOC_SRCS}
+docs/%.png: docs/%.mmd
 	mmdc -o $@ -i $<
 
 run-master: ${MASTER_MAIN} ${SRCS} ${PROTO_OUTS}
