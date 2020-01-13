@@ -6,11 +6,11 @@ import (
 	"net"
 	"time"
 
-	hotel_pb "minornine.com/hotel/src/proto"
-	"minornine.com/hotel/src/spawner"
+	hotel_pb "github.com/minism/hotel/src/proto"
+	"github.com/minism/hotel/src/spawner"
 
 	"google.golang.org/grpc"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/shared"
 )
 
 const (

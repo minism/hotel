@@ -15,7 +15,7 @@ MAINTAINER joshbothun@gmail.com
 RUN apk add --update gcc musl-dev git
 
 # Set the working directory to where go will expect packages.
-WORKDIR $GOPATH/src/minornine.com/hotel/
+WORKDIR $GOPATH/src/github.com/minism/hotel/
 
 # Copy everything into the container (Except whats in .dockerignore).
 COPY . .

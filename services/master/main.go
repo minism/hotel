@@ -12,14 +12,14 @@ import (
 	"os"
 
 	"github.com/gorilla/handlers"
-	"minornine.com/hotel/src/master/config"
-	"minornine.com/hotel/src/master/db"
-	"minornine.com/hotel/src/master/reaper"
-	"minornine.com/hotel/src/master/router"
-	"minornine.com/hotel/src/master/rpc"
-	"minornine.com/hotel/src/master/session"
-	hotel_pb "minornine.com/hotel/src/proto"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/master/config"
+	"github.com/minism/hotel/src/master/db"
+	"github.com/minism/hotel/src/master/reaper"
+	"github.com/minism/hotel/src/master/router"
+	"github.com/minism/hotel/src/master/rpc"
+	"github.com/minism/hotel/src/master/session"
+	hotel_pb "github.com/minism/hotel/src/proto"
+	"github.com/minism/hotel/src/shared"
 )
 
 const (
