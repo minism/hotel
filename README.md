@@ -11,7 +11,7 @@ There are two services which are deployed separately:
 
 The ideal relationship between these services is visualized in the following diagram:
 
-![Architecture](xx)
+![Architecture](https://raw.githubusercontent.com/minism/hotel/master/docs/architecture.png)
 
 ## Clients
 Hotel was designed with Unity in mind as a client, but is agnostic to the game engine.
@@ -20,7 +20,9 @@ Hotel was designed with Unity in mind as a client, but is agnostic to the game e
 
 ## Example control flow
 
-TODO
+Below is an example request flow for a game client requesting that a new game server be spawned, and connecting to it:
+
+![Spawn Flow](https://raw.githubusercontent.com/minism/hotel/master/docs/client-spawn-sequence.png)
 
 ## API
 
