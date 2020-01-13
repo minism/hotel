@@ -1,14 +1,10 @@
-- Require HTTPS
 - Implement NAT hole punching.
-- Metadata blob attached to servers.
-- Add game server spawning (large task)
-- Add expected game ID types to configuration for extra security.
-  - Spawning behavior could also be determined based on this config.
+- Arbitrary metadata blob attached to servers.
 - Errors should be defined at the same level, for ex strings should all be 
   written in "controllers.go", and should not trust error messages from deeper 
   layers. However, those messages could be logged?
-- Sessions should be stateful so the master server can be restarted
-  and clients dont get 403s
+- Sessions should be persistent so the master server can be restarted
+  and clients dont get 403s.
 
 Authentication requirements/research:
     - Should be generally hard to LIST/CREATE/SPAWN
@@ -16,31 +12,9 @@ Authentication requirements/research:
             - However HTTPs has the problem of client intercepting proxies. But this
               can also be circumvented to some degree by using Certificate Pinning
     - Only the owner of a server should be able to UPDATE/DELETE/PING since that would
-      be the primary abuse vector
-    - I think what I want is basically a login flow without u/p, basically just an endpoing
-      you hit and get a token back, which you use to create and maintain your own resources,
-      like a traditional session ID in an auth system.  But there doesn't need to be the
-      overhead of "account registration".
-    - How does Master Server Framework do it?
-        - Client sends a public key, the server uses that to encrypt a session key and sends
-          that back down to the client.  That is only used for login and register requests
-          though
-        - For general security on an RPC like RegisterRooms, i *think* anyone can call this,
-          but still to be determined
-        - For security on DestroyRoom RPC, the code does:
-            if (message.Peer != room.Peer) { return ERROR }
-          Which means its assigning the room id to the *peer* to ensure its the same client
-          making the request. My naive assumption is that this is equivalent to an HTTP
-          session but I could but wrong.
-        - How is "Peer" lookup determined for an incoming request? Looks like its just based
-          on the connection ID of the UNet socket:
-            - (on connection) var peer = new PeerUnet(connectionId, _socketId);
-                              _connectedPeers[connectionId] = peer;
-            - (on data recv)  _connectedPeers.TryGetValue(connectionId, out peer);
-        - This is predicated on UNet connection ID in ReceiveFromHost:
-            https://docs.unity3d.com/ScriptReference/Networking.NetworkTransport.ReceiveFromHost.html
-          Can this be spoofed?
-    - Conclusion: Will go with a simple session ID system.
+      be the primary abuse vector.
+    - Simple solution is an /identify endpoint which is like /login but without u/p, it just
+      generates and provides a unique session token for managing resources.
 
 Game server hosting models which hotel can support:
     - Persistent client-server
@@ -55,7 +29,6 @@ Game server hosting models which hotel can support:
     - Client initiated: Client-server
         - Clients create game servers by requesting that one be spawned for them server side. The request
           is sent through the master server which RPCs to the spawner to spin up a new instance.
-
 
 Docker stuff:
   - Go object cache for faster builds: https://medium.com/windmill-engineering/tips-tricks-for-making-your-golang-container-builds-10x-faster-4cc618a43827
