@@ -16,7 +16,7 @@ The ideal relationship between these services is visualized in the following dia
 ## Clients
 Hotel was designed with Unity in mind as a client, but is agnostic to the game engine.
 
-[hotel-client-unity] is a ready-made Unity client implementation that abstracts away much of the internal API calls.
+[hotel-client-unity](https://github.com/minism/hotel-client-unity) is a ready-made Unity client implementation that abstracts away much of the internal API calls.
 
 ## Example control flow
 
@@ -29,5 +29,9 @@ Below is an example request flow for a game client requesting that a new game se
 TODO
 
 ## Deployment
+
+TODO
+
+## Roadmap
 
 TODO
