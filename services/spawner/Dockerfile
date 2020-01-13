@@ -32,6 +32,9 @@ RUN CGO_ENABLED=0 go build -o /build/hotel-spawner services/spawner/main.go
 # environment needed to execute the binary artifact.
 # Note that its important the "build" and "runtime" linux environments
 # are both alpine here, so we don't need to think about cross-compiling.
+
+# Use ubuntu instead of alpine for the master server. This is an assumption that
+# we probably need a fuller linux environment for running a game server.
 FROM ubuntu:latest
 
 # Set the Current Working Directory inside the container.
@@ -42,9 +45,6 @@ COPY --from=builder /build/hotel-spawner .
 
 # Copy the example config to the data directory.
 COPY services/spawner/example.config.json /data/config.json
-
-# The RPC server runs on port 3002, so expose that.
-EXPOSE 3002
 
 # Specify default environment variables.
 ENV HOTEL_DATA_PATH /data
