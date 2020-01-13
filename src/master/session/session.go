@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	"minornine.com/hotel/src/master/models"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/master/models"
+	"github.com/minism/hotel/src/shared"
 )
 
 type contextKeyType string

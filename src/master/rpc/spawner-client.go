@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"minornine.com/hotel/src/master/models"
-	hotel_pb "minornine.com/hotel/src/proto"
+	"github.com/minism/hotel/src/master/models"
+	hotel_pb "github.com/minism/hotel/src/proto"
 
 	"google.golang.org/grpc"
 )

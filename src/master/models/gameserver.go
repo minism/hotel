@@ -5,7 +5,7 @@ import (
 	"errors"
 	"io"
 
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/shared"
 )
 
 // ServerIDType is a type alias for game server IDs.

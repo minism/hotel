@@ -5,9 +5,9 @@ import (
 	"log"
 	"sort"
 
-	"minornine.com/hotel/src/master/db"
-	"minornine.com/hotel/src/master/models"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/master/db"
+	"github.com/minism/hotel/src/master/models"
+	"github.com/minism/hotel/src/shared"
 )
 
 // RegisterSpawner adds the given spawner to the database.

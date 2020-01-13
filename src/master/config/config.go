@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/shared"
 )
 
 type contextKeyType string

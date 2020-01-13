@@ -9,12 +9,12 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"minornine.com/hotel/src/master/config"
-	"minornine.com/hotel/src/master/db"
-	"minornine.com/hotel/src/master/models"
-	"minornine.com/hotel/src/master/rpc"
-	"minornine.com/hotel/src/master/session"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/master/config"
+	"github.com/minism/hotel/src/master/db"
+	"github.com/minism/hotel/src/master/models"
+	"github.com/minism/hotel/src/master/rpc"
+	"github.com/minism/hotel/src/master/session"
+	"github.com/minism/hotel/src/shared"
 )
 
 const (

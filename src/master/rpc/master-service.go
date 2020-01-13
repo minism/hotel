@@ -5,14 +5,14 @@ import (
 	"log"
 	"net"
 
-	"minornine.com/hotel/src/master/models"
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/master/models"
+	"github.com/minism/hotel/src/shared"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
 	"google.golang.org/grpc/peer"
-	hotel_pb "minornine.com/hotel/src/proto"
+	hotel_pb "github.com/minism/hotel/src/proto"
 )
 
 // MasterService contains RPC implementations for the master service.

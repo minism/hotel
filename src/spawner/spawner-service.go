@@ -7,7 +7,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	hotel_pb "minornine.com/hotel/src/proto"
+	hotel_pb "github.com/minism/hotel/src/proto"
 )
 
 // SpawnerService contains RPC implementations for the spawner service.

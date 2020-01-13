@@ -3,7 +3,7 @@ package models
 import (
 	"fmt"
 
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/shared"
 )
 
 // Spawner represents a running hotel spawner instance which we can RPC to.

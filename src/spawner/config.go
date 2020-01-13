@@ -1,7 +1,7 @@
 package spawner
 
 import (
-	"minornine.com/hotel/src/shared"
+	"github.com/minism/hotel/src/shared"
 )
 
 const DEFAULT_PORT uint32 = 3002

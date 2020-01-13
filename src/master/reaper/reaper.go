@@ -4,10 +4,10 @@ import (
 	"log"
 	"time"
 
-	"minornine.com/hotel/src/master/config"
-	"minornine.com/hotel/src/master/db"
-	"minornine.com/hotel/src/master/rpc"
-	"minornine.com/hotel/src/master/session"
+	"github.com/minism/hotel/src/master/config"
+	"github.com/minism/hotel/src/master/db"
+	"github.com/minism/hotel/src/master/rpc"
+	"github.com/minism/hotel/src/master/session"
 )
 
 // StartReaper will kick off a goroutine for all reaper tasks.

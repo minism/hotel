@@ -2,9 +2,9 @@ package router
 
 import (
 	"github.com/gorilla/mux"
-	"minornine.com/hotel/src/master/config"
-	"minornine.com/hotel/src/master/controllers"
-	"minornine.com/hotel/src/master/session"
+	"github.com/minism/hotel/src/master/config"
+	"github.com/minism/hotel/src/master/controllers"
+	"github.com/minism/hotel/src/master/session"
 )
 
 // CreateRouter will create the main mux router used by the master HTTP service.
