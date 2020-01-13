@@ -24,7 +24,6 @@ func (s *MasterService) RegisterSpawner(ctx context.Context, request *hotel_pb.R
 	pr, ok := peer.FromContext(ctx)
 	if ok {
 		log.Printf("Received RPC from spawner: %v.\n  GameID: %v\n  Max servers: %v", pr.Addr, request.Status.SupportedGameId, request.Status.MaxGameServers)
-		log.Printf("")
 	}
 	host := request.Host
 	if host == "" {
